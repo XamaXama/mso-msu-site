@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель администратора | МСО МГУ</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Стили для админки */
+        .admin-container { max-width: 600px; margin: 50px auto; padding: 30px; background: white; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        .hidden { display: none; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit; }
+        button { background-color: #0047A0; color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-size: 1rem; }
+        button:hover { background-color: #003580; }
+        #newsList { margin-top: 30px; border-top: 2px solid #eee; padding-top: 20px; }
+        .news-item { background: #f9f9f9; padding: 15px; margin-bottom: 10px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-text">
+                        <h1>🔐 Панель администратора</h1>
+                    </div>
+                </div>
+                <nav class="nav">
+                    <a href="index.html">На главную</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container admin-container">
+            <!-- 1. Экран ввода пароля -->
+            <div id="loginScreen">
+                <h2>Вход для администратора</h2>
+                <div class="form-group">
+                    <label for="password">Пароль:</label>
+                    <input type="password" id="password" placeholder="Введите пароль">
+                </div>
+                <button onclick="checkPassword()">Войти</button>
+                <p id="loginError" style="color: red; margin-top: 10px;"></p>
+                <p><small>Подсказка: чтобы установить пароль, замените 'our_secret_password' в коде страницы на свой.</small></p>
+            </div>
+
+            <!-- 2. Экран управления (скрыт по умолчанию) -->
+            <div id="adminPanel" class="hidden">
+                <h2>Добавить новость для сайта</h2>
+                <div class="form-group">
+                    <label for="newsTitle">Заголовок новости:</label>
+                    <input type="text" id="newsTitle" placeholder="Например: Сбор отряда 'Параллакс'">
+                </div>
+                <div class="form-group">
+                    <label for="newsDate">Дата:</label>
+                    <input type="date" id="newsDate">
+                </div>
+                <div class="form-group">
+                    <label for="newsText">Текст новости:</label>
+                    <textarea id="newsText" rows="4" placeholder="Подробное описание..."></textarea>
+                </div>
+                <button onclick="addNews()">Добавить новость</button>
+                <hr>
+                <h3>Список добавленных новостей (для копирования)</h3>
+                <div id="newsList">
+                    <!-- Сюда будут добавляться новости -->
+                    <p>Новостей пока нет.</p>
+                </div>
+                <p><strong>Как это работает:</strong> Новости сохраняются только в памяти вашего браузера. Чтобы добавить их на сайт, вам нужно будет скопировать этот список и вручную обновить файл <code>news.json</code> на GitHub.</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // === ПАРОЛЬ ДЛЯ ВХОДА ===
+        // ЗАМЕНИТЕ 'our_secret_password' на свой реальный пароль!
+        const ADMIN_PASSWORD = 'our_secret_password';
+
+        function checkPassword() {
+            const input = document.getElementById('password').value;
+            const errorEl = document.getElementById('loginError');
+            if (input === ADMIN_PASSWORD) {
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('adminPanel').classList.remove('hidden');
+                loadNewsFromStorage();
+            } else {
+                errorEl.textContent = 'Неверный пароль. Попробуйте снова.';
+            }
+        }
+
+        // === РАБОТА С НОВОСТЯМИ (в localStorage) ===
+        const NEWS_STORAGE_KEY = 'mso_news';
+
+        function addNews() {
+            const title = document.getElementById('newsTitle').value.trim();
+            const date = document.getElementById('newsDate').value;
+            const text = document.getElementById('newsText').value.trim();
+
+            if (!title || !date || !text) {
+                alert('Заполните все поля!');
+                return;
+            }
+
+            // Получаем старые новости
+            let newsArray = JSON.parse(localStorage.getItem(NEWS_STORAGE_KEY)) || [];
+            // Добавляем новую
+            newsArray.unshift({ // unshift добавляет в начало массива
+                id: Date.now(), // уникальный ID на основе времени
+                title: title,
+                date: date,
+                text: text
+            });
+            // Сохраняем обратно
+            localStorage.setItem(NEWS_STORAGE_KEY, JSON.stringify(newsArray));
+
+            // Очищаем форму и обновляем список
+            document.getElementById('newsTitle').value = '';
+            document.getElementById('newsDate').value = '';
+            document.getElementById('newsText').value = '';
+            loadNewsFromStorage();
+            alert('Новость добавлена в локальное хранилище!');
+        }
+
+        function loadNewsFromStorage() {
+            const newsArray = JSON.parse(localStorage.getItem(NEWS_STORAGE_KEY)) || [];
+            const container = document.getElementById('newsList');
+
+            if (newsArray.length === 0) {
+                container.innerHTML = '<p>Новостей пока нет.</p>';
+                return;
+            }
+
+            let html = '';
+            newsArray.forEach(news => {
+                html += `
+                <div class="news-item">
+                    <strong>${news.title}</strong> (${news.date})<br>
+                    ${news.text}
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        // Для удобства: нажатие Enter в поле пароля
+        document.getElementById('password').addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                checkPassword();
+            }
+        });
+    </script>
+</body>
+</html>
