@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>История движения | МСО МГУ</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Стили для таймлайна */
+        .timeline { position: relative; max-width: 900px; margin: 40px auto; }
+        .timeline::after { content: ''; position: absolute; width: 6px; background-color: #0047A0; top: 0; bottom: 0; left: 50%; margin-left: -3px; }
+        .timeline-item { padding: 10px 40px; position: relative; width: 50%; box-sizing: border-box; }
+        .timeline-item:nth-child(odd) { left: 0; }
+        .timeline-item:nth-child(even) { left: 50%; }
+        .timeline-content { padding: 20px; background-color: white; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); position: relative; }
+        .timeline-item:nth-child(odd) .timeline-content::after { content: ''; position: absolute; width: 20px; height: 20px; right: -10px; top: 22px; background-color: white; transform: rotate(45deg); box-shadow: 2px -2px 4px rgba(0,0,0,0.05); }
+        .timeline-item:nth-child(even) .timeline-content::after { content: ''; position: absolute; width: 20px; height: 20px; left: -10px; top: 22px; background-color: white; transform: rotate(45deg); box-shadow: -2px 2px 4px rgba(0,0,0,0.05); }
+        .timeline-date { font-weight: bold; color: #0047A0; margin-bottom: 10px; font-size: 1.1em; }
+        @media (max-width: 768px) {
+            .timeline::after { left: 31px; }
+            .timeline-item { width: 100%; padding-left: 70px; padding-right: 25px; }
+            .timeline-item:nth-child(even) { left: 0%; }
+            .timeline-content::after { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-text">
+                        <h1>МСО МГУ</h1>
+                        <p>История движения</p>
+                    </div>
+                </div>
+                <nav class="nav">
+                    <a href="index.html">Главная</a>
+                    <a href="#1959">1959</a>
+                    <a href="#modern">Наше время</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <section class="hero" style="min-height: 40vh; background: linear-gradient(135deg, #003366 0%, #0047A0 100%);">
+            <div class="container">
+                <div class="hero-content">
+                    <h2>От первых целинников до наших дней</h2>
+                    <p>История студенческих отрядов МГУ — это история инициативы, труда и дружбы, заложившей фундамент для всероссийского движения.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container">
+                <h3>Хронология ключевых событий</h3>
+                <div class="timeline">
+
+                    <div class="timeline-item" id="1959">
+                        <div class="timeline-content">
+                            <div class="timeline-date">1959 год</div>
+                            <h4>Рождение легенды</h4>
+                            <p>339 студентов и аспирантов МГУ имени М.В. Ломоносова отправились на целину в Казахстан, положив начало Всесоюзному студенческому отряду. Этот первый отряд стал символом энтузиазма и романтики.</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-date">1960-е – 1980-е годы</div>
+                            <h4>Эпоха массового движения</h4>
+                            <p>Движение стремительно развивается. Студенты МГУ работают на стройках БАМа, в сельском хозяйстве, в пионерских лагерях. Формируется уникальная атмосфера и традиции, школа жизни для миллионов.</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-date">1990-е годы</div>
+                            <h4>Испытание перестройкой</h4>
+                            <p>В период социально-экономических изменений движение не исчезает, а трансформируется. Отряды МГУ находят новые формы работы, сохраняя преемственность традиций.</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item" id="modern">
+                        <div class="timeline-content">
+                            <div class="timeline-date">2000-е годы – настоящее время</div>
+                            <h4>Возрождение и новый формат</h4>
+                            <p>Создается Молодёжно-Студенческий Штаб (МСО) МГУ. Движение становится разнообразнее: появляются педагогические, сервисные, IT, строительные, медицинские отряды, добровольные дружины. Акцент смещается на профессиональный опыт и социальную значимость.</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-date">Сегодня</div>
+                            <h4>МСО МГУ сегодня</h4>
+                            <p>Это 9 ключевых направлений, сотни активных бойцов, десятки реализованных проектов и тысячи часов полезной работы. Мы чтим историю и строим будущее, соединяя лучшие традиции с современными возможностями.</p>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="text-center" style="margin-top: 50px;">
+                    <a href="index.html" class="btn">Вернуться на главную</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© Молодёжно-Студенческий Штаб МГУ, 2023</p>
+            <p>Продолжаем дело, начатое в 1959 году.</p>
+        </div>
+    </footer>
+</body>
+</html>
