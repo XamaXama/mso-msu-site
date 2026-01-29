@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Новости | МСО МГУ</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .vk-container {
+            margin: 30px auto;
+            max-width: 800px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-text">
+                        <h1>МСО МГУ</h1>
+                        <p>Новости и события</p>
+                    </div>
+                </div>
+                <nav class="nav">
+                    <a href="index.html">Главная</a>
+                    <a href="history.html">История</a>
+                    <a href="gallery.html">Галерея</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <section class="section">
+            <div class="container">
+                <h3>Лента новостей из нашей группы ВКонтакте</h3>
+                <p>Здесь отображаются последние записи. Полная лента — в нашей группе.</p>
+
+                <!-- Контейнер для виджета ВК -->
+                <div class="vk-container">
+                    <div id="vk_news_widget"></div>
+                </div>
+
+                <div class="text-center" style="margin-top: 40px;">
+                    <a href="https://vk.com/mso_msu" target="_blank" class="btn btn-vk">
+                        <i class="fab fa-vk"></i> Перейти в группу ВКонтакте
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© Молодёжно-Студенческий Штаб МГУ, 2023</p>
+        </div>
+    </footer>
+
+    <!-- Скрипт для виджета VK -->
+    <script src="https://vk.com/js/api/openapi.js?169" type="text/javascript"></script>
+    <script type="text/javascript">
+        // ЗАМЕНИТЕ -000000000 на ID вашей группы ВК
+        VK.Widgets.Group("vk_news_widget", {
+            mode: 3, // Режим отображения ленты
+            width: "auto",
+            height: "500", // Высота блока с новостями
+            color1: 'FFFFFF',
+            color2: '0047A0', // Синий МГУ
+            color3: '555555'
+        }, -38554927);
+    </script>
+</body>
+</html>
