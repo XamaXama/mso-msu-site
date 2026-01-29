@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Галерея | МСО МГУ</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Стили для галереи */
+        .gallery-controls { text-align: center; margin: 30px 0; }
+        .filter-btn { background: #eaeaea; border: none; padding: 10px 20px; margin: 5px; border-radius: 20px; cursor: pointer; transition: all 0.3s; }
+        .filter-btn:hover, .filter-btn.active { background-color: #0047A0; color: white; }
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; margin-top: 30px; }
+        .gallery-item { border-radius: 10px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.08); transition: transform 0.3s; background: white; }
+        .gallery-item:hover { transform: translateY(-10px); }
+        .gallery-item img, .gallery-item iframe { width: 100%; height: 200px; object-fit: cover; display: block; border: none; }
+        .gallery-item video { width: 100%; height: 200px; object-fit: cover; display: block; }
+        .gallery-info { padding: 15px; }
+        .gallery-date { font-size: 0.9em; color: #666; margin-bottom: 5px; }
+        .gallery-title { font-weight: bold; margin-bottom: 10px; color: #222; }
+        .no-items { grid-column: 1 / -1; text-align: center; padding: 40px; color: #888; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-text">
+                        <h1>МСО МГУ</h1>
+                        <p>Фото и видеоархив</p>
+                    </div>
+                </div>
+                <nav class="nav">
+                    <a href="index.html">Главная</a>
+                    <a href="#all">Все</a>
+                    <a href="#2023">2023</a>
+                    <a href="#2022">2022</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <section class="hero" style="min-height: 30vh; background: linear-gradient(135deg, #222 0%, #444 100%);">
+            <div class="container">
+                <div class="hero-content">
+                    <h2>Живые моменты нашей жизни</h2>
+                    <p>Здесь собраны фотографии и видео с выездов, мероприятий и будней отрядов МГУ.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container">
+                <h3>Галерея</h3>
+                <p class="text-center">Отфильтруйте материалы по году или посмотрите всё сразу.</p>
+
+                <!-- Кнопки фильтрации -->
+                <div class="gallery-controls">
+                    <button class="filter-btn active" data-filter="all">Все годы</button>
+                    <button class="filter-btn" data-filter="2023">2023 год</button>
+                    <button class="filter-btn" data-filter="2022">2022 год</button>
+                    <button class="filter-btn" data-filter="2021">2021 год</button>
+                </div>
+
+                <!-- Контейнер для галереи -->
+                <div class="gallery-grid" id="galleryContainer">
+                    <!-- Сюда вставятся элементы галереи из JS -->
+                    <p class="no-items">Идёт загрузка галереи...</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© Молодёжно-Студенческий Штаб МГУ, 2023</p>
+        </div>
+    </footer>
+
+    <script>
+        // === МАССИВ С ДАННЫМИ ГАЛЕРЕИ ===
+        // ВЫ МОЖЕТЕ РЕДАКТИРОВАТЬ ЭТОТ МАССИВ, ЧТОБЫ ДОБАВИТЬ СВОИ ФОТО И ВИДЕО
+        const galleryData = [
+            {
+                type: "image", // "image" или "video" или "youtube"
+                src: "images/gallery/event1.jpg", // Путь к вашему фото
+                title: "Выезд на природу отряда 'Альдебаран'",
+                date: "2023-08-15",
+                year: "2023"
+            },
+            {
+                type: "image",
+                src: "images/gallery/build1.jpg",
+                title: "Работа строительного отряда 'Параллакс'",
+                date: "2023-07-10",
+                year: "2023"
+            },
+            {
+                type: "youtube", // Для видео с YouTube
+                src: "https://www.youtube.com/embed/dQw4w9WgXcQ", // Вставьте ID видео (после watch?v=)
+                title: "Интервью с командиром отряда 'Спутник'",
+                date: "2022-05-22",
+                year: "2022"
+            },
+            {
+                type: "image",
+                src: "images/gallery/study1.jpg",
+                title: "Обучающий семинар для новых бойцов",
+                date: "2022-03-30",
+                year: "2022"
+            },
+            {
+                type: "image",
+                src: "images/gallery/camp1.jpg",
+                title: "Педагогический отряд 'Кеплер' в детском лагере",
+                date: "2021-06-18",
+                year: "2021"
+            },
+            {
+                type: "video", // Для видеофайлов, загруженных на ваш сайт
+                src: "videos/heroes.mp4",
+                title: "Наши герои. Короткое видео об отряде",
+                date: "2021-09-05",
+                year: "2021"
+            }
+        ];
+
+        // === ФУНКЦИИ ДЛЯ РЕНДЕРА И ФИЛЬТРАЦИИ ===
+        function renderGallery(filterYear = 'all') {
+            const container = document.getElementById('galleryContainer');
+            let html = '';
+            let filteredData = galleryData;
+
+            if (filterYear !== 'all') {
+                filteredData = galleryData.filter(item => item.year === filterYear);
+            }
+
+            if (filteredData.length === 0) {
+                container.innerHTML = '<p class="no-items">По выбранному фильтру материалов не найдено.</p>';
+                return;
+            }
+
+            filteredData.forEach(item => {
+                let mediaHtml = '';
+                if (item.type === 'image') {
+                    mediaHtml = `<img src="${item.src}" alt="${item.title}" loading="lazy">`;
+                } else if (item.type === 'youtube') {
+                    mediaHtml = `<iframe src="${item.src}" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                } else if (item.type === 'video') {
+                    mediaHtml = `<video controls><source src="${item.src}" type="video/mp4">Ваш браузер не поддерживает видео.</video>`;
+                }
+
+                html += `
+                <div class="gallery-item" data-year="${item.year}">
+                    <div class="gallery-media">
+                        ${mediaHtml}
+                    </div>
+                    <div class="gallery-info">
+                        <div class="gallery-date">${item.date} (${item.year} г.)</div>
+                        <div class="gallery-title">${item.title}</div>
+                    </div>
+                </div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // === ИНИЦИАЛИЗАЦИЯ И НАВЕШИВАНИЕ СОБЫТИЙ ===
+        document.addEventListener('DOMContentLoaded', () => {
+            // Первоначальная отрисовка
+            renderGallery();
+
+            // Обработка кликов по кнопкам фильтра
+            document.querySelectorAll('.filter-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    // Убираем класс active у всех кнопок
+                    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                    // Добавляем active нажатой кнопке
+                    this.classList.add('active');
+                    // Рендерим галерею с новым фильтром
+                    renderGallery(this.getAttribute('data-filter'));
+                });
+            });
+        });
+    </script>
+</body>
+</html>
