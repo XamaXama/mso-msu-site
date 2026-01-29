@@ -147,5 +147,185 @@
     </footer>
 
     <script src="script.js"></script>
+
+    <!-- =========================================== -->
+<!-- ПЛАВАЮЩИЙ ВИДЖЕТ TELEGRAM -->
+<!-- =========================================== -->
+<style>
+    /* Контейнер виджета */
+    .tg-widget {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 10000;
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* Кнопка для открытия/закрытия */
+    .tg-widget-btn {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #0088cc, #34b7f1); /* Градиент Telegram */
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 20px rgba(0, 136, 204, 0.4);
+        border: none;
+        transition: all 0.3s ease;
+        color: white;
+        font-size: 28px;
+    }
+
+    .tg-widget-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 25px rgba(0, 136, 204, 0.6);
+    }
+
+    /* Окно чата (скрыто по умолчанию) */
+    .tg-widget-window {
+        position: absolute;
+        bottom: 70px; /* Размещаем над кнопкой */
+        right: 0;
+        width: 320px;
+        height: 460px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+        display: none; /* Скрыто до нажатия */
+        flex-direction: column;
+        border: 1px solid #e0e0e0;
+    }
+
+    /* Заголовок окна чата */
+    .tg-widget-header {
+        background: linear-gradient(135deg, #0088cc, #34b7f1);
+        color: white;
+        padding: 16px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .tg-widget-header .close-btn {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        line-height: 1;
+        padding: 0;
+        width: 24px;
+        height: 24px;
+    }
+
+    /* Контейнер для iframe самого виджета Telegram */
+    .tg-widget-iframe-container {
+        flex-grow: 1;
+        background: #f5f5f5;
+    }
+
+    .tg-widget-iframe-container iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+
+    /* Адаптивность для мобильных */
+    @media (max-width: 480px) {
+        .tg-widget {
+            bottom: 15px;
+            right: 15px;
+        }
+        .tg-widget-window {
+            width: calc(100vw - 30px);
+            right: 0;
+            height: 400px;
+        }
+    }
+
+    /* Анимация появления окна */
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .tg-widget-window.open {
+        display: flex;
+        animation: slideUp 0.3s ease-out;
+    }
+</style>
+
+<div class="tg-widget">
+    <!-- Окно чата (скрыто) -->
+    <div class="tg-widget-window" id="tgChatWindow">
+        <div class="tg-widget-header">
+            <span>💬 Чат с ботом МСО МГУ</span>
+            <button class="close-btn" id="tgCloseBtn">&times;</button>
+        </div>
+        <div class="tg-widget-iframe-container">
+            <!-- ВСТАВЬТЕ СЮДА КОД ВИДЖЕТА TELEGRAM -->
+            <!-- НАЧАЛО КОДА ВИДЖЕТА (Замените mso_msu_bot) -->
+            <script async src="https://telegram.org/js/telegram-widget.js?22"
+                    data-telegram-discussion="mso_msu_bot"
+                    data-comments="5"
+                    data-color="0047A0"
+                    data-dark="1">
+            </script>
+            <!-- КОНЕЦ КОДА ВИДЖЕТА -->
+        </div>
+    </div>
+
+    <!-- Плавающая кнопка -->
+    <button class="tg-widget-btn" id="tgWidgetBtn" aria-label="Открыть чат с Telegram-ботом">
+        <i class="fab fa-telegram"></i>
+    </button>
+</div>
+
+<script>
+    // === УПРАВЛЕНИЕ ВИДЖЕТОМ ===
+    const tgBtn = document.getElementById('tgWidgetBtn');
+    const chatWindow = document.getElementById('tgChatWindow');
+    const closeBtn = document.getElementById('tgCloseBtn');
+
+    // Открыть чат при клике на кнопку
+    tgBtn.addEventListener('click', function() {
+        chatWindow.classList.add('open');
+        // Меняем иконку на "крестик" при открытии (опционально)
+        // this.innerHTML = '<i class="fas fa-times"></i>';
+    });
+
+    // Закрыть чат при клике на крестик
+    closeBtn.addEventListener('click', function() {
+        chatWindow.classList.remove('open');
+        // Возвращаем иконку Telegram
+        // tgBtn.innerHTML = '<i class="fab fa-telegram"></i>';
+    });
+
+    // Закрыть чат при клике вне его области
+    document.addEventListener('click', function(event) {
+        if (!chatWindow.contains(event.target) && event.target !== tgBtn) {
+            chatWindow.classList.remove('open');
+            // tgBtn.innerHTML = '<i class="fab fa-telegram"></i>';
+        }
+    });
+
+    // Предотвращаем закрытие при клике внутри окна чата
+    chatWindow.addEventListener('click', function(event) {
+        event.stopPropagation();
+    });
+</script>
+<!-- Подключение иконок Font Awesome (если ещё не подключены) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    
 </body>
 </html>
