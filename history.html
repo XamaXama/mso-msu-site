@@ -6,505 +6,107 @@
     <title>История движения | МСО МГУ</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Стили для расширяемого таймлайна */
-        .timeline-container {
-            max-width: 1200px;
-            margin: 40px auto;
-            position: relative;
-        }
+        /* Основные стили */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%); color: #333; line-height: 1.6; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
         
-        .timeline-year-nav {
-            display: flex;
-            overflow-x: auto;
-            gap: 10px;
-            padding: 20px 0;
-            margin-bottom: 40px;
-            position: sticky;
-            top: 0;
-            background: white;
-            z-index: 10;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            border-radius: 10px;
-        }
+        /* Шапка */
+        .header { background: linear-gradient(135deg, #003366 0%, #0047A0 100%); color: white; padding: 30px 0; margin-bottom: 40px; }
+        .header-content { display: flex; justify-content: space-between; align-items: center; }
+        .logo-text h1 { font-size: 2.5em; margin-bottom: 5px; }
+        .logo-text p { font-size: 1.2em; opacity: 0.9; }
+        .nav { display: flex; gap: 20px; }
+        .nav a { color: white; text-decoration: none; padding: 10px 20px; background: rgba(255,255,255,0.1); border-radius: 5px; transition: all 0.3s ease; }
+        .nav a:hover { background: rgba(255,255,255,0.2); transform: translateY(-3px); }
         
-        .year-btn {
-            padding: 10px 20px;
-            background: #f0f0f0;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
+        /* Навигация по годам */
+        .timeline-year-nav { display: flex; overflow-x: auto; gap: 10px; padding: 20px 0; margin-bottom: 40px; position: sticky; top: 0; background: white; z-index: 10; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-radius: 10px; }
+        .year-btn { padding: 10px 20px; background: #f0f0f0; border: none; border-radius: 25px; cursor: pointer; white-space: nowrap; transition: all 0.3s ease; font-weight: 500; }
+        .year-btn:hover { background: #e0e0e0; transform: translateY(-2px); }
+        .year-btn.active { background: #0047A0; color: white; box-shadow: 0 4px 15px rgba(0, 71, 160, 0.3); }
+        .year-btn.major { background: #003366; color: white; }
         
-        .year-btn:hover {
-            background: #e0e0e0;
-            transform: translateY(-2px);
-        }
+        /* Секции годов */
+        .year-section { display: none; padding: 40px; background: white; border-radius: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.08); margin-bottom: 40px; animation: fadeIn 0.5s ease; }
+        .year-section.active { display: block; }
+        .year-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 3px solid #0047A0; }
+        .year-title { font-size: 2.2em; color: #003366; margin: 0; }
+        .year-period { color: #666; font-size: 1.1em; }
         
-        .year-btn.active {
-            background: #0047A0;
-            color: white;
-            box-shadow: 0 4px 15px rgba(0, 71, 160, 0.3);
-        }
+        /* Вкладки */
+        .year-tabs { display: flex; gap: 10px; margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .year-tab { padding: 12px 24px; background: #f8f9fa; border: none; border-radius: 8px 8px 0 0; cursor: pointer; transition: all 0.3s ease; font-weight: 500; }
+        .year-tab:hover { background: #e9ecef; }
+        .year-tab.active { background: #0047A0; color: white; }
+        .tab-content { display: none; line-height: 1.8; color: #444; }
+        .tab-content.active { display: block; animation: fadeIn 0.5s ease; }
         
-        .year-btn.major {
-            background: #003366;
-            color: white;
-        }
+        /* Контент */
+        .content-columns { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; }
+        @media (max-width: 900px) { .content-columns { grid-template-columns: 1fr; } }
+        .main-content { font-size: 1.05em; }
+        .main-content p { margin-bottom: 20px; }
+        .main-content h3 { color: #0047A0; margin: 25px 0 15px; }
+        .side-content { background: #f8f9fa; padding: 25px; border-radius: 10px; border-left: 4px solid #0047A0; }
         
-        .year-btn.major.active {
-            background: #002244;
-        }
+        /* Списки фактов */
+        .fact-list { list-style: none; padding: 0; }
+        .fact-list li { padding: 12px 0; border-bottom: 1px solid #ddd; display: flex; align-items: center; gap: 10px; }
+        .fact-list li:last-child { border-bottom: none; }
+        .fact-list i { color: #0047A0; }
         
-        /* Секции с подробной информацией */
-        .year-section {
-            display: none;
-            padding: 40px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.08);
-            margin-bottom: 40px;
-            animation: fadeIn 0.5s ease;
-        }
+        /* Теги */
+        .content-tags { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; }
+        .content-tag { background: #e9ecef; padding: 5px 15px; border-radius: 20px; font-size: 0.9em; color: #555; }
+        .content-tag.important { background: #ffd700; color: #333; font-weight: bold; }
         
-        .year-section.active {
-            display: block;
-        }
+        /* Цитаты */
+        .historical-quote { background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 25px; border-radius: 10px; margin: 25px 0; border-left: 5px solid #0047A0; font-style: italic; position: relative; }
+        .historical-quote:before { content: '"'; font-size: 4em; color: #0047A0; opacity: 0.2; position: absolute; top: 10px; left: 15px; }
+        .quote-author { text-align: right; font-weight: bold; color: #0047A0; margin-top: 15px; }
         
-        .year-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 3px solid #0047A0;
-        }
+        /* Источники */
+        .sources-box { background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 25px 0; border-left: 4px solid #0047A0; }
+        .sources-box h4 { color: #0047A0; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .source-item { padding: 10px 0; border-bottom: 1px solid #e0e0e0; }
+        .source-item:last-child { border-bottom: none; }
+        .source-link { color: #0047A0; text-decoration: none; border-bottom: 1px dotted #0047A0; transition: all 0.2s ease; }
+        .source-link:hover { color: #003366; border-bottom: 1px solid #003366; }
         
-        .year-title {
-            font-size: 2.2em;
-            color: #003366;
-            margin: 0;
-        }
-        
-        .year-period {
-            color: #666;
-            font-size: 1.1em;
-        }
-        
-        /* Вкладки внутри секции года */
-        .year-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-        }
-        
-        .year-tab {
-            padding: 12px 24px;
-            background: #f8f9fa;
-            border: none;
-            border-radius: 8px 8px 0 0;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-        
-        .year-tab:hover {
-            background: #e9ecef;
-        }
-        
-        .year-tab.active {
-            background: #0047A0;
-            color: white;
-        }
-        
-        .tab-content {
-            display: none;
-            line-height: 1.8;
-            color: #444;
-        }
-        
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        /* Стили для подробного контента */
-        .content-columns {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 40px;
-        }
-        
-        @media (max-width: 900px) {
-            .content-columns {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        .main-content {
-            font-size: 1.05em;
-        }
-        
-        .main-content p {
-            margin-bottom: 20px;
-        }
-        
-        .main-content h3 {
-            color: #0047A0;
-            margin: 25px 0 15px;
-        }
-        
-        .side-content {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 10px;
-            border-left: 4px solid #0047A0;
-        }
-        
-        .fact-list {
-            list-style: none;
-            padding: 0;
-        }
-        
-        .fact-list li {
-            padding: 12px 0;
-            border-bottom: 1px solid #ddd;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .fact-list li:last-child {
-            border-bottom: none;
-        }
-        
-        .fact-list i {
-            color: #0047A0;
-        }
-        
-        /* Секция документов */
-        .documents-section {
-            margin-top: 40px;
-            padding-top: 30px;
-            border-top: 2px solid #eee;
-        }
-        
-        .document-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-        
-        .document-card {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            border-left: 4px solid #0047A0;
-        }
-        
-        .document-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            background: #e9ecef;
-        }
-        
-        .document-card h4 {
-            color: #0047A0;
-            margin-bottom: 10px;
-        }
-        
-        /* Карта для 1959 года */
-        .map-container {
-            margin: 30px 0;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        
-        .map-placeholder {
-            height: 300px;
-            background: linear-gradient(135deg, #0047A0, #003366);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.2em;
-        }
-        
-        /* Система тегов */
-        .content-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 20px 0;
-        }
-        
-        .content-tag {
-            background: #e9ecef;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            color: #555;
-        }
-        
-        .content-tag.important {
-            background: #ffd700;
-            color: #333;
-            font-weight: bold;
-        }
-        
-        .content-tag.person {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .content-tag.location {
-            background: #cce5ff;
-            color: #004085;
-        }
-        
-        /* Навигация между годами */
-        .year-navigation {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
-        }
-        
-        .nav-btn {
-            padding: 10px 25px;
-            background: #0047A0;
-            color: white;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .nav-btn:hover {
-            background: #003366;
-            transform: translateY(-2px);
-        }
-        
-        .nav-btn.disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-        
-        /* Стили для цитат */
-        .historical-quote {
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            padding: 25px;
-            border-radius: 10px;
-            margin: 25px 0;
-            border-left: 5px solid #0047A0;
-            font-style: italic;
-            position: relative;
-        }
-        
-        .historical-quote:before {
-            content: '"';
-            font-size: 4em;
-            color: #0047A0;
-            opacity: 0.2;
-            position: absolute;
-            top: 10px;
-            left: 15px;
-        }
-        
-        .quote-author {
-            text-align: right;
-            font-weight: bold;
-            color: #0047A0;
-            margin-top: 15px;
-        }
+        /* Навигация */
+        .year-navigation { display: flex; justify-content: space-between; margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; }
+        .nav-btn { padding: 10px 25px; background: #0047A0; color: white; border: none; border-radius: 25px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; }
+        .nav-btn:hover { background: #003366; transform: translateY(-2px); }
+        .nav-btn.disabled { background: #ccc; cursor: not-allowed; }
         
         /* Анимации */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes slideIn {
-            from { transform: translateX(-20px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
         /* Адаптивность */
         @media (max-width: 768px) {
-            .year-header {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .year-title {
-                font-size: 1.8em;
-            }
-            
-            .year-tabs {
-                overflow-x: auto;
-                flex-wrap: nowrap;
-            }
-            
-            .year-tab {
-                padding: 10px 15px;
-                font-size: 0.9em;
-            }
-            
-            .year-section {
-                padding: 25px 20px;
-            }
-        }
-        
-        /* Стили для поиска */
-        .history-search {
-            max-width: 600px;
-            margin: 0 auto 40px;
-        }
-        
-        .search-container {
-            position: relative;
-        }
-        
-        .search-input {
-            width: 100%;
-            padding: 15px 50px 15px 20px;
-            border: 2px solid #ddd;
-            border-radius: 30px;
-            font-size: 1em;
-            transition: all 0.3s ease;
-        }
-        
-        .search-input:focus {
-            outline: none;
-            border-color: #0047A0;
-            box-shadow: 0 0 0 3px rgba(0, 71, 160, 0.1);
-        }
-        
-        .search-btn {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: #0047A0;
-            cursor: pointer;
-            font-size: 1.2em;
-        }
-        
-        /* Индикатор загрузки */
-        .loading-indicator {
-            display: none;
-            text-align: center;
-            padding: 40px;
-            color: #666;
-        }
-        
-        .loading-indicator.active {
-            display: block;
-        }
-        
-        .loader {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #0047A0;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .source-link {
-            color: #0047A0;
-            text-decoration: none;
-            border-bottom: 1px dotted #0047A0;
-            transition: all 0.2s ease;
-        }
-        
-        .source-link:hover {
-            color: #003366;
-            border-bottom: 1px solid #003366;
-        }
-        
-        .sources-box {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 25px 0;
-            border-left: 4px solid #0047A0;
-        }
-        
-        .sources-box h4 {
-            color: #0047A0;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .source-item {
-            padding: 10px 0;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        
-        .source-item:last-child {
-            border-bottom: none;
-        }
-        
-        /* Общие стили */
-        .header {
-            background: linear-gradient(135deg, #003366 0%, #0047A0 100%);
-            color: white;
-            padding: 30px 0;
-            margin-bottom: 40px;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        .interactive-badge {
-            display: inline-block;
-            background: #ffd700;
-            color: #333;
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 0.8em;
-            margin-left: 10px;
-            font-weight: bold;
+            .year-header { flex-direction: column; gap: 15px; }
+            .year-title { font-size: 1.8em; }
+            .year-tabs { overflow-x: auto; flex-wrap: nowrap; }
+            .year-tab { padding: 10px 15px; font-size: 0.9em; }
+            .year-section { padding: 25px 20px; }
+            .header-content { flex-direction: column; gap: 20px; text-align: center; }
         }
     </style>
 </head>
 <body>
     <header class="header">
         <div class="container">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <h1 style="font-size: 2.5em; margin-bottom: 10px;">МСО МГУ</h1>
-                    <p style="font-size: 1.2em; opacity: 0.9;">История движения <span class="interactive-badge">Интерактивная</span></p>
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-text">
+                        <h1>МСО МГУ</h1>
+                        <p>История движения</p>
+                    </div>
                 </div>
-                <nav style="display: flex; gap: 20px;">
-                    <a href="index.html" style="color: white; text-decoration: none; padding: 10px 20px; background: rgba(255,255,255,0.1); border-radius: 5px;">Главная</a>
-                    <a href="#timeline" style="color: white; text-decoration: none; padding: 10px 20px; background: rgba(255,255,255,0.1); border-radius: 5px;">Таймлайн</a>
+                <nav class="nav">
+                    <a href="index.html">Главная</a>
+                    <a href="#timeline">Таймлайн</a>
                 </nav>
             </div>
         </div>
@@ -517,539 +119,978 @@
                 Выберите год для изучения подробной исторической справки. Каждая статья содержит факты, основанные на архивных материалах и воспоминаниях участников.
             </p>
             
-            <div class="timeline-container">
-                <div class="timeline-year-nav" id="yearNav">
-                    <!-- Годы будут добавлены через JavaScript -->
-                </div>
-                
-                <!-- Секция 1923 года -->
-                <div class="year-section" id="year-1923" data-year="1923">
-                    <div class="year-header">
-                        <div>
-                            <h2 class="year-title">1923 год</h2>
-                            <p class="year-period">Предыстория студенческих трудовых отрядов в СССР</p>
-                        </div>
-                        <div class="content-tags">
-                            <span class="content-tag important">Предыстория</span>
-                            <span class="content-tag location">Томск</span>
-                        </div>
-                    </div>
-                    
-                    <div class="year-tabs">
-                        <button class="year-tab active" data-tab="main-1923">Историческая справка</button>
-                        <button class="year-tab" data-tab="sources-1923">Источники</button>
-                    </div>
-                    
-                    <div class="tab-content active" id="main-1923">
-                        <div class="content-columns">
-                            <div class="main-content">
-                                <h3>Первые организованные студенческие трудовые инициативы</h3>
-                                <p>В 1923 году группа студентов Томского политехнического института организовала выезд для строительства электростанции в деревне Горскино. Это событие считается одним из первых задокументированных случаев организованной трудовой деятельности студентов в Советской России.</p>
-                                
-                                <p>Хотя эта инициатива не была непосредственно связана с МГУ, она демонстрирует ранние традиции студенческого трудового движения в стране, которые позже получили развитие в виде движения студенческих строительных отрядов.</p>
-                                
-                                <div class="historical-quote">
-                                    "Студенчество всегда было наиболее активной частью молодёжи, готовой не только получать знания, но и применять их на практике для блага страны."
-                                    <div class="quote-author">— Из истории молодёжных движений СССР</div>
-                                </div>
-                            </div>
-                            
-                            <div class="side-content">
-                                <h4><i class="fas fa-info-circle"></i> Ключевые факты</h4>
-                                <ul class="fact-list">
-                                    <li><i class="fas fa-map-marker-alt"></i> <strong>Место:</strong> Деревня Горскино</li>
-                                    <li><i class="fas fa-university"></i> <strong>ВУЗ:</strong> Томский политехнический институт</li>
-                                    <li><i class="fas fa-bolt"></i> <strong>Проект:</strong> Строительство электростанции</li>
-                                    <li><i class="fas fa-history"></i> <strong>Значение:</strong> Один из первых студенческих трудовых проектов</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="tab-content" id="sources-1923">
-                        <div class="sources-box">
-                            <h4><i class="fas fa-book"></i> Источники информации</h4>
-                            <div class="source-item">
-                                <p><strong>История студенческого движения в СССР</strong> — обзор ранних студенческих трудовых инициатив 1920-х годов.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Секция 1956 года -->
-                <div class="year-section" id="year-1956" data-year="1956">
-                    <div class="year-header">
-                        <div>
-                            <h2 class="year-title">1956 год</h2>
-                            <p class="year-period">Первый массовый выезд студентов МГУ на целину</p>
-                        </div>
-                        <div class="content-tags">
-                            <span class="content-tag important">Предшественник ССО</span>
-                            <span class="content-tag">Физфак МГУ</span>
-                            <span class="content-tag location">Целина</span>
-                        </div>
-                    </div>
-                    
-                    <div class="year-tabs">
-                        <button class="year-tab active" data-tab="main-1956">Историческая справка</button>
-                        <button class="year-tab" data-tab="sources-1956">Источники</button>
-                    </div>
-                    
-                    <div class="tab-content active" id="main-1956">
-                        <div class="content-columns">
-                            <div class="main-content">
-                                <h3>Начало традиции выездов на целину</h3>
-                                <p>В 1956 году состоялся первый массовый выезд студентов физического факультета МГУ на сельскохозяйственную целину. Эта поездка стала важным этапом в формировании идеи организованных студенческих трудовых коллективов.</p>
-                                
-                                <p>Хотя эта экспедиция была скорее сельскохозяйственной, чем строительной, она заложила основы будущих студенческих отрядов, продемонстрировав возможность организованной трудовой деятельности студентов во время летних каникул.</p>
-                                
-                                <h3>Значение для развития движения</h3>
-                                <p>Опыт 1956 года показал, что студенты не только готовы, но и способны эффективно работать в сложных условиях, совмещая трудовую деятельность с учебой. Этот успешный опыт вдохновил организаторов на создание более масштабных и организованных проектов.</p>
-                            </div>
-                            
-                            <div class="side-content">
-                                <h4><i class="fas fa-info-circle"></i> Ключевые факты</h4>
-                                <ul class="fact-list">
-                                    <li><i class="fas fa-calendar"></i> <strong>Год:</strong> 1956</li>
-                                    <li><i class="fas fa-university"></i> <strong>Факультет:</strong> Физический</li>
-                                    <li><i class="fas fa-tractor"></i> <strong>Вид работ:</strong> Сельскохозяйственные</li>
-                                    <li><i class="fas fa-users"></i> <strong>Масштаб:</strong> Массовый выезд</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="tab-content" id="sources-1956">
-                        <div class="sources-box">
-                            <h4><i class="fas fa-book"></i> Источники информации</h4>
-                            <div class="source-item">
-                                <p>Материалы по истории студенческих отрядов МГУ. <a href="https://phys.msu.ru/rus/about/sovphys/ISSUES-2018/05(133)-2018/27499/" class="source-link" target="_blank">ссылка</a></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Секция 1957 года -->
-                <div class="year-section" id="year-1957" data-year="1957">
-                    <div class="year-header">
-                        <div>
-                            <h2 class="year-title">1957 год</h2>
-                            <p class="year-period">Инициатива Владимира Неудачина: сплочение коллектива через труд</p>
-                        </div>
-                        <div class="content-tags">
-                            <span class="content-tag person">В.Г. Неудачин</span>
-                            <span class="content-tag">Комсомол</span>
-                            <span class="content-tag location">Целина</span>
-                        </div>
-                    </div>
-                    
-                    <div class="year-tabs">
-                        <button class="year-tab active" data-tab="main-1957">Историческая справка</button>
-                        <button class="year-tab" data-tab="sources-1957">Источники</button>
-                    </div>
-                    
-                    <div class="tab-content active" id="main-1957">
-                        <div class="content-columns">
-                            <div class="main-content">
-                                <h3>Новый подход к организации студенческого труда</h3>
-                                <p>В 1957 году секретарь бюро комсомола физического факультета <strong>Владимир Германович Неудачин</strong> организовал выезд первокурсников на целину для уборки урожая. В отличие от предыдущих поездок, главной целью этой экспедиции стал не ударный труд, а <strong>сплочение коллектива и укрепление дружеских связей</strong> между студентами.</p>
-                                
-                                <p>Этот подход оказался крайне успешным и заложил философскую основу будущего движения студенческих отрядов, где труд сочетался с формированием особой атмосферы товарищества и взаимопомощи.</p>
-                                
-                                <div class="historical-quote">
-                                    "Главной целью стал не ударный труд, а сплоченность коллектива, преданность дружбе."
-                                    <div class="quote-author">— О целях экспедиции 1957 года</div>
-                                </div>
-                                
-                                <h3>Новаторство подхода</h3>
-                                <p>Акцент на коллективообразование, а не только на производственные показатели, стал важным нововведением, которое отличало студенческие отряды от обычных трудовых коллективов и способствовало формированию особой "отрядной" культуры.</p>
-                            </div>
-                            
-                            <div class="side-content">
-                                <h4><i class="fas fa-info-circle"></i> Ключевые факты</h4>
-                                <ul class="fact-list">
-                                    <li><i class="fas fa-user-tie"></i> <strong>Организатор:</strong> В.Г. Неудачин</li>
-                                    <li><i class="fas fa-bullseye"></i> <strong>Главная цель:</strong> Сплочение коллектива</li>
-                                    <li><i class="fas fa-users"></i> <strong>Участники:</strong> Первокурсники физфака</li>
-                                    <li><i class="fas fa-seedling"></i> <strong>Работы:</strong> Уборка урожая на целине</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="tab-content" id="sources-1957">
-                        <div class="sources-box">
-                            <h4><i class="fas fa-book"></i> Источники информации</h4>
-                            <div class="source-item">
-                                <p>Литвиненко С.Ф. "От поколения к поколению", в сборнике "50 лет ССО". Москва: Издательский Дом «Зимородок», 2009. <a href="#" class="source-link" onclick="alert('Ссылка на книгу: ISBN 5-98849-033-6')">подробнее</a></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Секция 1958 года -->
-                <div class="year-section" id="year-1958" data-year="1958">
-                    <div class="year-header">
-                        <div>
-                            <h2 class="year-title">1958 год</h2>
-                            <p class="year-period">Расширение движения под руководством Вячеслава Письменного</p>
-                        </div>
-                        <div class="content-tags">
-                            <span class="content-tag person">В.Д. Письменный</span>
-                            <span class="content-tag important">Массовый выезд</span>
-                            <span class="content-tag location">Казахстан</span>
-                        </div>
-                    </div>
-                    
-                    <div class="year-tabs">
-                        <button class="year-tab active" data-tab="main-1958">Историческая справка</button>
-                        <button class="year-tab" data-tab="details-1958">Детали</button>
-                        <button class="year-tab" data-tab="sources-1958">Источники</button>
-                    </div>
-                    
-                    <div class="tab-content active" id="main-1958">
-                        <div class="content-columns">
-                            <div class="main-content">
-                                <h3>Новый масштаб студенческих инициатив</h3>
-                                <p>В 1958 году <strong>Вячеслав Дмитриевич Письменный</strong> продолжил и развил идею поездок на целину, организовав выезд с необычайным размахом. На уборке хлеба в Казахстане работали уже два курса физического факультета — первый и третий, всего более 500 человек.</p>
-                                
-                                <p>Это был качественно новый этап: если предыдущие выезды были скорее локальными инициативами, то экспедиция 1958 года продемонстрировала возможность организации действительно массового студенческого труда.</p>
-                                
-                                <h3>Организационные сложности и их преодоление</h3>
-                                <p>Массовый выезд 1958 года столкнулся с серьезными организационными трудностями. Большая часть студентов вернулась с большим опозданием на учебу, что вызвало серьезное разбирательство в университете. Однако, вместо запрета подобных инициатив, было принято решение помочь им развиться в более организованной форме.</p>
-                                
-                                <div class="historical-quote">
-                                    "На уборке хлеба работали два курса физфака - первый и третий (более 500 человек)."
-                                    <div class="quote-author">— О масштабах экспедиции 1958 года</div>
-                                </div>
-                            </div>
-                            
-                            <div class="side-content">
-                                <h4><i class="fas fa-info-circle"></i> Ключевые факты</h4>
-                                <ul class="fact-list">
-                                    <li><i class="fas fa-user-tie"></i> <strong>Организатор:</strong> В.Д. Письменный</li>
-                                    <li><i class="fas fa-users"></i> <strong>Участники:</strong> Более 500 студентов</li>
-                                    <li><i class="fas fa-graduation-cap"></i> <strong>Курсы:</strong> 1-й и 3-й курсы физфака</li>
-                                    <li><i class="fas fa-bread-slice"></i> <strong>Работы:</strong> Уборка хлеба в Казахстане</li>
-                                    <li><i class="fas fa-exclamation-triangle"></i> <strong>Итог:</strong> Опоздание к началу учебы</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="tab-content" id="details-1958">
-                        <h3>Последствия и решения</h3>
-                        <p>Опоздание студентов к началу учебного года вызвало серьезное разбирательство в университете. Однако вместо того чтобы запретить подобные инициативы, руководство университета и комсомольская организация решили помочь развитию этого начинания в более организованной форме.</p>
-                        
-                        <p>На очередном собрании было предложено организовать следующий выезд уже как <strong>строительный отряд</strong> с четкой организацией, графиком и ответственностью. Это решение стало ключевым для создания первого официального студенческого строительного отряда в 1959 году.</p>
-                    </div>
-                    
-                    <div class="tab-content" id="sources-1958">
-                        <div class="sources-box">
-                            <h4><i class="fas fa-book"></i> Источники информации</h4>
-                            <div class="source-item">
-                                <p>Подробная история первых отрядов на сайте физфака МГУ. <a href="https://phys.msu.ru/rus/about/sovphys/ISSUES-2018/05(133)-2018/27499/" class="source-link" target="_blank">ссылка</a></p>
-                            </div>
-                            <div class="source-item">
-                                <p>Литвиненко С.Ф. "Гагарин был после нас. Первопроходец". Интервью. Газета Московского городского штаба молодежно-студенческих отрядов, № 2 (2), 2003.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Секция 1959 года -->
-                <div class="year-section" id="year-1959" data-year="1959">
-                    <div class="year-header">
-                        <div>
-                            <h2 class="year-title">1959 год</h2>
-                            <p class="year-period">Рождение Всесоюзного студенческого строительного отряда</p>
-                        </div>
-                        <div class="content-tags">
-                            <span class="content-tag important">Основание ССО</span>
-                            <span class="content-tag person">С.Ф. Литвиненко</span>
-                            <span class="content-tag location">Казахстан</span>
-                        </div>
-                    </div>
-                    
-                    <div class="year-tabs">
-                        <button class="year-tab active" data-tab="main-1959">Историческая справка</button>
-                        <button class="year-tab" data-tab="details-1959">Детали экспедиции</button>
-                        <button class="year-tab" data-tab="documents-1959">Документы</button>
-                    </div>
-                    
-                    <div class="tab-content active" id="main-1959">
-                        <div class="content-columns">
-                            <div class="main-content">
-                                <h3>Официальное начало движения</h3>
-                                <p><strong>1959 год считается годом рождения Всесоюзного студенческого строительного отряда</strong>. Первый отряд численностью 339 физиков-второкурсников выехал в Булаевский район Северо-Казахстанской области, в совхозы «Ждановский», «Узункульский» и «Булаевский».</p>
-                                
-                                <p>Командиром первого отряда был избран <strong>Сергей Филиппович Литвиненко</strong>, секретарь бюро ВЛКСМ IV курса физического факультета. Этот выезд стал первым официально организованным, согласованным и утвержденным студенческим строительным отрядом.</p>
-                                
-                                <div class="historical-quote">
-                                    "339 студентов и аспирантов МГУ имени М.В. Ломоносова отправились на целину в Казахстан, положив начало Всесоюзному студенческому отряду."
-                                    <div class="quote-author">— Официальная историческая справка</div>
-                                </div>
-                                
-                                <h3>Результаты и значение</h3>
-                                <p>За летний сезон студенты построили 16 объектов. Успех этой экспедиции показал эффективность организованного студенческого труда и положил начало массовому движению, которое в последующие годы охватило всю страну.</p>
-                            </div>
-                            
-                            <div class="side-content">
-                                <h4><i class="fas fa-info-circle"></i> Ключевые данные</h4>
-                                <ul class="fact-list">
-                                    <li><i class="fas fa-users"></i> <strong>Численность:</strong> 339 человек</li>
-                                    <li><i class="fas fa-graduation-cap"></i> <strong>Факультет:</strong> Физический</li>
-                                    <li><i class="fas fa-map-marker-alt"></i> <strong>Место:</strong> Булаевский район, Казахстан</li>
-                                    <li><i class="fas fa-hard-hat"></i> <strong>Построено:</strong> 16 объектов</li>
-                                    <li><i class="fas fa-user-tie"></i> <strong>Командир:</strong> С.Ф. Литвиненко</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="tab-content" id="details-1959">
-                        <h3>Организация первого отряда</h3>
-                        <p>Подготовка к первой целине велась несколько месяцев. Студенты проходили медицинский осмотр, получали необходимые инструкции по технике безопасности, изучали основы строительных работ. Отряд был организован как полноценная производственная единица с четкой структурой и распределением обязанностей.</p>
-                        
-                        <h3>Условия работы и быт</h3>
-                        <p>Студенты жили в палатках и вагончиках, питались в полевой столовой. Рабочий день длился 8-10 часов с перерывом на обед. Несмотря на тяжелые условия, в отряде царила атмосфера взаимопомощи и энтузиазма.</p>
-                        
-                        <h3>Культурная жизнь отряда</h3>
-                        <p>В свободное время студенты организовывали концерты, спортивные соревнования, выпускали стенгазету. Эти мероприятия способствовали сплочению коллектива и созданию особой отрядной атмосферы, которая стала одной из отличительных черт движения студенческих отрядов.</p>
-                    </div>
-                    
-                    <div class="tab-content" id="documents-1959">
-                        <div class="sources-box">
-                            <h4><i class="fas fa-book"></i> Основные источники</h4>
-                            <div class="source-item">
-                                <p>Подробная история первого отряда. <a href="http://www.guker.info/kovaleva/kov21.html" class="source-link" target="_blank">ссылка</a></p>
-                            </div>
-                            <div class="source-item">
-                                <p>Статья на сайте физфака МГУ. <a href="https://phys.msu.ru/rus/about/sovphys/ISSUES-2018/05(133)-2018/27499/" class="source-link" target="_blank">ссылка</a></p>
-                            </div>
-                        </div>
-                        
-                        <div class="sources-box">
-                            <h4><i class="fas fa-archive"></i> Книги и публикации</h4>
-                            <div class="source-item">
-                                <p><strong>Сергей Литвиненко и ССО. О времени и о себе</strong> – М.: Издательство «Проспект». 2018. ISBN 978-5-98597-374-7</p>
-                            </div>
-                            <div class="source-item">
-                                <p><strong>С.Ф. Литвиненко. «Комсомольцы и молодёжь на целине Павлодарского Прииртышья»</strong> (очерки, воспоминания, документы). Павлодар: ТОО НПФ «ЭКО», 2004. ISBN 9965-610-17-2</p>
-                            </div>
-                            <div class="source-item">
-                                <p><strong>С.Ф. Литвиненко. «Гагарин был после нас. Первопроходец»</strong> Интервью. Газета Московского городского штаба молодежно-студенческих отрядов, № 2 (2), 2003.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Секция 1960 года -->
-                <div class="year-section" id="year-1960" data-year="1960">
-                    <div class="year-header">
-                        <div>
-                            <h2 class="year-title">1960 год</h2>
-                            <p class="year-period">Расширение движения: присоединение мехмата и первый Всесоюзный отряд</p>
-                        </div>
-                        <div class="content-tags">
-                            <span class="content-tag person">В.А. Садовничий</span>
-                            <span class="content-tag important">Всесоюзный масштаб</span>
-                            <span class="content-tag">Мехмат МГУ</span>
-                        </div>
-                    </div>
-                    
-                    <div class="year-tabs">
-                        <button class="year-tab active" data-tab="main-1960">Историческая справка</button>
-                        <button class="year-tab" data-tab="sources-1960">Источники</button>
-                    </div>
-                    
-                    <div class="tab-content active" id="main-1960">
-                        <div class="content-columns">
-                            <div class="main-content">
-                                <h3>Качественный рост движения</h3>
-                                <p>В 1960 году к стройотряду физиков присоединился механико-математический факультет МГУ. Среди участников был <strong>Виктор Антонович Садовничий</strong> — будущий ректор МГУ, который в то время был студентом мехмата.</p>
-                                
-                                <p>Студенты построили первую улицу в совхозе «Булаевский» Северо-Казахстанской области, которая по решению местных жителей и руководства совхоза была названа <strong>Университетской</strong>. Всего в стройке участвовало 520 студентов МГУ.</p>
-                                
-                                <h3>Приобретение всесоюзного статуса</h3>
-                                <p>Именно в 1960 году студенческий строительный отряд становится <strong>Всесоюзным</strong>. Его численность достигает около трехсот тысяч человек по всей стране. Движение перестает быть локальной инициативой МГУ и приобретает общегосударственное значение.</p>
-                                
-                                <div class="historical-quote">
-                                    "К стройотряду физиков присоединился мехмат, в том числе Виктор Антонович Садовничий, нынешний ректор МГУ."
-                                    <div class="quote-author">— О расширении движения в 1960 году</div>
-                                </div>
-                            </div>
-                            
-                            <div class="side-content">
-                                <h4><i class="fas fa-info-circle"></i> Ключевые факты</h4>
-                                <ul class="fact-list">
-                                    <li><i class="fas fa-users"></i> <strong>Численность МГУ:</strong> 520 студентов</li>
-                                    <li><i class="fas fa-road"></i> <strong>Построено:</strong> Улица "Университетская"</li>
-                                    <li><i class="fas fa-flag"></i> <strong>Статус:</strong> Всесоюзный отряд</li>
-                                    <li><i class="fas fa-user-graduate"></i> <strong>Участник:</strong> В.А. Садовничий</li>
-                                    <li><i class="fas fa-graduation-cap"></i> <strong>Новые факультеты:</strong> Мехмат</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="tab-content" id="sources-1960">
-                        <div class="sources-box">
-                            <h4><i class="fas fa-book"></i> Источники информации</h4>
-                            <div class="source-item">
-                                <p>Материалы по истории студенческих отрядов МГУ. <a href="https://phys.msu.ru/rus/about/sovphys/ISSUES-2018/05(133)-2018/27499/" class="source-link" target="_blank">ссылка</a></p>
-                            </div>
-                            <div class="source-item">
-                                <p>Лепёхин В. А. "История студенческих строительных отрядов МГУ". М., 1990.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Дополнительные годы будут аналогично -->
-                <!-- Из-за ограничения длины показываю только первые годы -->
-
+            <div class="timeline-year-nav" id="yearNav">
+                <!-- Годы будут добавлены через JavaScript -->
             </div>
             
+            <!-- 1923 год -->
+            <div class="year-section" id="year-1923" data-year="1923">
+                <div class="year-header">
+                    <div>
+                        <h2 class="year-title">1923 год</h2>
+                        <p class="year-period">Предыстория студенческих трудовых отрядов в СССР</p>
+                    </div>
+                    <div class="content-tags">
+                        <span class="content-tag important">Предыстория</span>
+                        <span class="content-tag">Томск</span>
+                    </div>
+                </div>
+                <div class="year-tabs">
+                    <button class="year-tab active" data-tab="main-1923">Историческая справка</button>
+                    <button class="year-tab" data-tab="sources-1923">Источники</button>
+                </div>
+                <div class="tab-content active" id="main-1923">
+                    <div class="content-columns">
+                        <div class="main-content">
+                            <h3>Первые организованные студенческие трудовые инициативы</h3>
+                            <p>В 1923 году группа студентов Томского политехнического института организовала выезд для строительства электростанции в деревне Горскино. Это событие считается одним из первых задокументированных случаев организованной трудовой деятельности студентов в Советской России.</p>
+                            <p>Хотя эта инициатива не была непосредственно связана с МГУ, она демонстрирует ранние традиции студенческого трудового движения в стране, которые позже получили развитие в виде движения студенческих строительных отрядов.</p>
+                        </div>
+                        <div class="side-content">
+                            <h4><i class="fas fa-info-circle"></i> Ключевые факты</h4>
+                            <ul class="fact-list">
+                                <li><i class="fas fa-map-marker-alt"></i> <strong>Место:</strong> Деревня Горскино</li>
+                                <li><i class="fas fa-university"></i> <strong>ВУЗ:</strong> Томский политехнический институт</li>
+                                <li><i class="fas fa-bolt"></i> <strong>Проект:</strong> Строительство электростанции</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="sources-1923">
+                    <div class="sources-box">
+                        <h4><i class="fas fa-book"></i> Источники информации</h4>
+                        <div class="source-item">
+                            <p>История студенческого движения в СССР — обзор ранних студенческих трудовых инициатив 1920-х годов.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1956 год -->
+            <div class="year-section" id="year-1956" data-year="1956">
+                <div class="year-header">
+                    <div>
+                        <h2 class="year-title">1956 год</h2>
+                        <p class="year-period">Первый массовый выезд студентов МГУ на целину</p>
+                    </div>
+                    <div class="content-tags">
+                        <span class="content-tag important">Предшественник ССО</span>
+                        <span class="content-tag">Физфак МГУ</span>
+                    </div>
+                </div>
+                <div class="year-tabs">
+                    <button class="year-tab active" data-tab="main-1956">Историческая справка</button>
+                    <button class="year-tab" data-tab="sources-1956">Источники</button>
+                </div>
+                <div class="tab-content active" id="main-1956">
+                    <div class="content-columns">
+                        <div class="main-content">
+                            <h3>Начало традиции выездов на целину</h3>
+                            <p>В 1956 году состоялся первый массовый выезд студентов физического факультета МГУ на сельскохозяйственную целину. Эта поездка стала важным этапом в формировании идеи организованных студенческих трудовых коллективов.</p>
+                            <p>Хотя эта экспедиция была скорее сельскохозяйственной, чем строительной, она заложила основы будущих студенческих отрядов, продемонстрировав возможность организованной трудовой деятельности студентов во время летних каникул.</p>
+                        </div>
+                        <div class="side-content">
+                            <h4><i class="fas fa-info-circle"></i> Ключевые факты</h4>
+                            <ul class="fact-list">
+                                <li><i class="fas fa-calendar"></i> <strong>Год:</strong> 1956</li>
+                                <li><i class="fas fa-university"></i> <strong>Факультет:</strong> Физический</li>
+                                <li><i class="fas fa-tractor"></i> <strong>Вид работ:</strong> Сельскохозяйственные</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="sources-1956">
+                    <div class="sources-box">
+                        <h4><i class="fas fa-book"></i> Источники информации</h4>
+                        <div class="source-item">
+                            <p>Материалы по истории студенческих отрядов МГУ. <a href="https://phys.msu.ru/rus/about/sovphys/ISSUES-2018/05(133)-2018/27499/" class="source-link" target="_blank">ссылка</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1957 год -->
+            <div class="year-section" id="year-1957" data-year="1957">
+                <div class="year-header">
+                    <div>
+                        <h2 class="year-title">1957 год</h2>
+                        <p class="year-period">Инициатива Владимира Неудачина: сплочение коллектива через труд</p>
+                    </div>
+                    <div class="content-tags">
+                        <span class="content-tag">В.Г. Неудачин</span>
+                        <span class="content-tag">Комсомол</span>
+                    </div>
+                </div>
+                <div class="year-tabs">
+                    <button class="year-tab active" data-tab="main-1957">Историческая справка</button>
+                    <button class="year-tab" data-tab="sources-1957">Источники</button>
+                </div>
+                <div class="tab-content active" id="main-1957">
+                    <div class="content-columns">
+                        <div class="main-content">
+                            <h3>Новый подход к организации студенческого труда</h3>
+                            <p>В 1957 году секретарь бюро комсомола физического факультета <strong>Владимир Германович Неудачин</strong> организовал выезд первокурсников на целину для уборки урожая. Главной целью этой экспедиции стал не ударный труд, а <strong>сплочение коллектива и укрепление дружеских связей</strong> между студентами.</p>
+                            <p>Этот подход оказался крайне успешным и заложил философскую основу будущего движения студенческих отрядов, где труд сочетался с формированием особой атмосферы товарищества и взаимопомощи.</p>
+                        </div>
+                        <div class="side-content">
+                            <h4><i class="fas fa-info-circle"></i> Ключевые факты</h4>
+                            <ul class="fact-list">
+                                <li><i class="fas fa-user-tie"></i> <strong>Организатор:</strong> В.Г. Неудачин</li>
+                                <li><i class="fas fa-bullseye"></i> <strong>Главная цель:</strong> Сплочение коллектива</li>
+                                <li><i class="fas fa-users"></i> <strong>Участники:</strong> Первокурсники физфака</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="sources-1957">
+                    <div class="sources-box">
+                        <h4><i class="fas fa-book"></i> Источники информации</h4>
+                        <div class="source-item">
+                            <p>Литвиненко С.Ф. "От поколения к поколению", в сборнике "50 лет ССО". Москва: Издательский Дом «Зимородок», 2009.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1958 год -->
+            <div class="year-section" id="year-1958" data-year="1958">
+                <div class="year-header">
+                    <div>
+                        <h2 class="year-title">1958 год</h2>
+                        <p class="year-period">Расширение движения под руководством Вячеслава Письменного</p>
+                    </div>
+                    <div class="content-tags">
+                        <span class="content-tag">В.Д. Письменный</span>
+                        <span class="content-tag important">Массовый выезд</span>
+                    </div>
+                </div>
+                <div class="year-tabs">
+                    <button class="year-tab active" data-tab="main-1958">Историческая справка</button>
+                    <button class="year-tab" data-tab="sources-1958">Источники</button>
+                </div>
+                <div class="tab-content active" id="main-1958">
+                    <div class="content-columns">
+                        <div class="main-content">
+                            <h3>Новый масштаб студенческих инициатив</h3>
+                            <p>В 1958 году <strong>Вячеслав Дмитриевич Письменный</strong> продолжил и развил идею поездок на целину, организовав выезд с необычайным размахом. На уборке хлеба в Казахстане работали уже два курса физического факультета — первый и третий, всего более 500 человек.</p>
+                            <p>Это был качественно новый этап: если предыдущие выезды были скорее локальными инициативами, то экспедиция 1958 года продемонстрировала возможность организации действительно массового студенческого труда.</p>
+                        </div>
+                        <div class="side-content">
+                            <h4><i class="fas fa-info-circle"></i> Ключевые факты</h4>
+                            <ul class="fact-list">
+                                <li><i class="fas fa-user-tie"></i> <strong>Организатор:</strong> В.Д. Письменный</li>
+                                <li><i class="fas fa-users"></i> <strong>Участники:</strong> Более 500 студентов</li>
+                                <li><i class="fas fa-graduation-cap"></i> <strong>Курсы:</strong> 1-й и 3-й курсы физфака</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="sources-1958">
+                    <div class="sources-box">
+                        <h4><i class="fas fa-book"></i> Источники информации</h4>
+                        <div class="source-item">
+                            <p>Подробная история первых отрядов на сайте физфака МГУ. <a href="https://phys.msu.ru/rus/about/sovphys/ISSUES-2018/05(133)-2018/27499/" class="source-link" target="_blank">ссылка</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1959 год -->
+            <div class="year-section" id="year-1959" data-year="1959">
+                <div class="year-header">
+                    <div>
+                        <h2 class="year-title">1959 год</h2>
+                        <p class="year-period">Рождение Всесоюзного студенческого строительного отряда</p>
+                    </div>
+                    <div class="content-tags">
+                        <span class="content-tag important">Основание ССО</span>
+                        <span class="content-tag">С.Ф. Литвиненко</span>
+                        <span class="content-tag">Казахстан</span>
+                    </div>
+                </div>
+                <div class="year-tabs">
+                    <button class="year-tab active" data-tab="main-1959">Историческая справка</button>
+                    <button class="year-tab" data-tab="details-1959">Детали экспедиции</button>
+                    <button class="year-tab" data-tab="documents-1959">Документы</button>
+                </div>
+                <div class="tab-content active" id="main-1959">
+                    <div class="content-columns">
+                        <div class="main-content">
+                            <h3>Официальное начало движения</h3>
+                            <p><strong>1959 год считается годом рождения Всесоюзного студенческого строительного отряда</strong>. Первый отряд численностью 339 физиков-второкурсников выехал в Булаевский район Северо-Казахстанской области, в совхозы «Ждановский», «Узункульский» и «Булаевский».</p>
+                            <p>Командиром первого отряда был избран <strong>Сергей Филиппович Литвиненко</strong>, секретарь бюро ВЛКСМ IV курса физического факультета. Этот выезд стал первым официально организованным, согласованным и утвержденным студенческим строительным отрядом.</p>
+                            <div class="historical-quote">
+                                "339 студентов и аспирантов МГУ имени М.В. Ломоносова отправились на целину в Казахстан, положив начало Всесоюзному студенческому отряду."
+                                <div class="quote-author">— Официальная историческая справка</div>
+                            </div>
+                        </div>
+                        <div class="side-content">
+                            <h4><i class="fas fa-info-circle"></i> Ключевые данные</h4>
+                            <ul class="fact-list">
+                                <li><i class="fas fa-users"></i> <strong>Численность:</strong> 339 человек</li>
+                                <li><i class="fas fa-graduation-cap"></i> <strong>Факультет:</strong> Физический</li>
+                                <li><i class="fas fa-hard-hat"></i> <strong>Построено:</strong> 16 объектов</li>
+                                <li><i class="fas fa-user-tie"></i> <strong>Командир:</strong> С.Ф. Литвиненко</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="details-1959">
+                    <h3>Организация первого отряда</h3>
+                    <p>Подготовка к первой целине велась несколько месяцев. Студенты проходили медицинский осмотр, получали необходимые инструкции по технике безопасности, изучали основы строительных работ. Отряд был организован как полноценная производственная единица с четкой структурой и распределением обязанностей.</p>
+                </div>
+                <div class="tab-content" id="documents-1959">
+                    <div class="sources-box">
+                        <h4><i class="fas fa-book"></i> Основные источники</h4>
+                        <div class="source-item">
+                            <p>Подробная история первого отряда. <a href="http://www.guker.info/kovaleva/kov21.html" class="source-link" target="_blank">ссылка</a></p>
+                        </div>
+                        <div class="source-item">
+                            <p>Статья на сайте физфака МГУ. <a href="https://phys.msu.ru/rus/about/sovphys/ISSUES-2018/05(133)-2018/27499/" class="source-link" target="_blank">ссылка</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1960 год -->
+            <div class="year-section" id="year-1960" data-year="1960">
+                <div class="year-header">
+                    <div>
+                        <h2 class="year-title">1960 год</h2>
+                        <p class="year-period">Присоединение мехмата и первый Всесоюзный отряд</p>
+                    </div>
+                    <div class="content-tags">
+                        <span class="content-tag">В.А. Садовничий</span>
+                        <span class="content-tag important">Всесоюзный масштаб</span>
+                    </div>
+                </div>
+                <div class="year-tabs">
+                    <button class="year-tab active" data-tab="main-1960">Историческая справка</button>
+                    <button class="year-tab" data-tab="sources-1960">Источники</button>
+                </div>
+                <div class="tab-content active" id="main-1960">
+                    <div class="content-columns">
+                        <div class="main-content">
+                            <h3>Качественный рост движения</h3>
+                            <p>В 1960 году к стройотряду физиков присоединился механико-математический факультет МГУ. Среди участников был <strong>Виктор Антонович Садовничий</strong> — будущий ректор МГУ, который в то время был студентом мехмата. Численность отрядов МГУ достигла 520 человек.</p>
+                            <p>Студенты построили первую улицу в совхозе «Булаевский» Северо-Казахстанской области, которая по решению местных жителей была названа <strong>Университетской</strong>.</p>
+                        </div>
+                        <div class="side-content">
+                            <h4><i class="fas fa-info-circle"></i> Ключевые факты</h4>
+                            <ul class="fact-list">
+                                <li><i class="fas fa-users"></i> <strong>Численность МГУ:</strong> 520 студентов</li>
+                                <li><i class="fas fa-road"></i> <strong>Построено:</strong> Улица "Университетская"</li>
+                                <li><i class="fas fa-user-graduate"></i> <strong>Участник:</strong> В.А. Садовничий</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="sources-1960">
+                    <div class="sources-box">
+                        <h4><i class="fas fa-book"></i> Источники информации</h4>
+                        <div class="source-item">
+                            <p>Материалы по истории студенческих отрядов МГУ. <a href="https://phys.msu.ru/rus/about/sovphys/ISSUES-2018/05(133)-2018/27499/" class="source-link" target="_blank">ссылка</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1965 год -->
+            <div class="year-section" id="year-1965" data-year="1965">
+                <div class="year-header">
+                    <div>
+                        <h2 class="year-title">1965 год</h2>
+                        <p class="year-period">Студенческий строительный отряд становится Всесоюзным</p>
+                    </div>
+                    <div class="content-tags">
+                        <span class="content-tag important">Всесоюзный масштаб</span>
+                        <span class="content-tag">Массовость</span>
+                    </div>
+                </div>
+                <div class="year-tabs">
+                    <button class="year-tab active" data-tab="main-1965">Историческая справка</button>
+                    <button class="year-tab" data-tab="sources-1965">Источники</button>
+                </div>
+                <div class="tab-content active" id="main-1965">
+                    <div class="content-columns">
+                        <div class="main-content">
+                            <h3>Достижение нового масштаба</h3>
+                            <p>К 1965 году движение студенческих строительных отрядов достигло поистине всесоюзного масштаба. Численность участников составила около трёхсот тысяч человек по всему Советскому Союзу. Движение перестало быть локальной инициативой и превратилось в мощную общесоюзную организацию.</p>
+                            <p>В этом году в ССО страны было уже более 750 тысяч человек. Студенты работали на крупнейших стройках страны, включая строительство БАМа, КАМАЗа и других важнейших объектов народного хозяйства.</p>
+                            <div class="historical-quote">
+                                "Студенческий строительный отряд становится Всесоюзным, его численность — около трехсот тысяч человек. В ССО страны было более 750 тысяч человек, студенты работали на строительстве БАМа, КАМАЗа и т.д."
+                                <div class="quote-author">— Хроника студенческих отрядов</div>
+                            </div>
+                        </div>
+                        <div class="side-content">
+                            <h4><i class="fas fa-info-circle"></i> Ключевые факты</h4>
+                            <ul class="fact-list">
+                                <li><i class="fas fa-users"></i> <strong>Численность ССО:</strong> ~300,000 человек</li>
+                                <li><i class="fas fa-chart-line"></i> <strong>Общая численность:</strong> >750,000 человек</li>
+                                <li><i class="fas fa-hard-hat"></i> <strong>Ключевые объекты:</strong> БАМ, КАМАЗ</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="sources-1965">
+                    <div class="sources-box">
+                        <h4><i class="fas fa-book"></i> Источники информации</h4>
+                        <div class="source-item">
+                            <p>Хроника студенческих строительных отрядов МГУ. <a href="https://phys.msu.ru/rus/about/sovphys/ISSUES-2018/05(133)-2018/27499/" class="source-link" target="_blank">ссылка</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1970 год -->
+            <div class="year-section" id="year-1970" data-year="1970">
+                <div class="year-header">
+                    <div>
+                        <h2 class="year-title">1970-е годы</h2>
+                        <p class="year-period">Эпоха массового движения и участие в ударных комсомольских стройках</p>
+                    </div>
+                    <div class="content-tags">
+                        <span class="content-tag important">Расцвет движения</span>
+                        <span class="content-tag">БАМ</span>
+                        <span class="content-tag">Ударные стройки</span>
+                    </div>
+                </div>
+                <div class="year-tabs">
+                    <button class="year-tab active" data-tab="main-1970">Историческая справка</button>
+                    <button class="year-tab" data-tab="projects-1970">Ключевые проекты</button>
+                    <button class="year-tab" data-tab="sources-1970">Источники</button>
+                </div>
+                <div class="tab-content active" id="main-1970">
+                    <div class="content-columns">
+                        <div class="main-content">
+                            <h3>Пик развития движения</h3>
+                            <p>1970-е годы стали периодом наивысшего расцвета движения студенческих отрядов. Численность участников достигла 750 тысяч человек по всей стране. Движение превратилось в мощную социальную силу, способную решать масштабные народнохозяйственные задачи.</p>
+                            <p>Студенческие отряды МГУ активно участвовали во всех ключевых проектах этого периода, продолжая традиции, заложенные первыми целинниками.</p>
+                            <div class="historical-quote">
+                                "Движение стремительно развивается. Студенты МГУ работают на стройках БАМа, в сельском хозяйстве, в пионерских лагерях. Формируется уникальная атмосфера и традиции, школа жизни для миллионов."
+                                <div class="quote-author">— Из истории движения студотрядов</div>
+                            </div>
+                        </div>
+                        <div class="side-content">
+                            <h4><i class="fas fa-info-circle"></i> Ключевые факты</h4>
+                            <ul class="fact-list">
+                                <li><i class="fas fa-users"></i> <strong>Численность:</strong> 750,000+ человек</li>
+                                <li><i class="fas fa-train"></i> <strong>Главная стройка:</strong> БАМ (с 1974 г.)</li>
+                                <li><i class="fas fa-industry"></i> <strong>Другие объекты:</strong> КАМАЗ</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="projects-1970">
+                    <h3>Основные проекты 1970-х</h3>
+                    <ul class="fact-list">
+                        <li><strong>Байкало-Амурская магистраль (БАМ):</strong> Строительство железной дороги, мостов, тоннелей, поселков.</li>
+                        <li><strong>Камский автомобильный завод (КАМАЗ):</strong> Строительство одного из крупнейших автомобильных заводов.</li>
+                        <li><strong>Объекты энергетики:</strong> Строительство электростанций и линий электропередач.</li>
+                        <li><strong>Сельское хозяйство:</strong> Работы на целине, уборка урожая.</li>
+                    </ul>
+                </div>
+                <div class="tab-content" id="sources-1970">
+                    <div class="sources-box">
+                        <h4><i class="fas fa-book"></i> Источники информации</h4>
+                        <div class="source-item">
+                            <p>"Студенческие стройотряды: история, уроки, перспективы". Стенограмма научно-практической конференции. М., 2013.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1991 год -->
+            <div class="year-section" id="year-1991" data-year="1991">
+                <div class="year-header">
+                    <div>
+                        <h2 class="year-title">1991 год</h2>
+                        <p class="year-period">Распад централизованной системы студенческих отрядов</p>
+                    </div>
+                    <div class="content-tags">
+                        <span class="content-tag important">Переломный момент</span>
+                        <span class="content-tag">Распад СССР</span>
+                    </div>
+                </div>
+                <div class="year-tabs">
+                    <button class="year-tab active" data-tab="main-1991">Историческая справка</button>
+                    <button class="year-tab" data-tab="sources-1991">Источники</button>
+                </div>
+                <div class="tab-content active" id="main-1991">
+                    <div class="content-columns">
+                        <div class="main-content">
+                            <h3>Кризис и трансформация</h3>
+                            <p>1991 год стал переломным для движения студенческих отрядов. После запрета КПСС и роспуска её молодёжной организации ВЛКСМ центральный штаб студенческих строительных отрядов (ВССО) прекратил своё существование.</p>
+                            <p>Однако движение не исчезло полностью. В некоторых регионах России, таких как Свердловская область, студенческие отряды продолжили свою деятельность без перерыва. Например, сохранился Свердловский Областной Студенческий Отряд (МОО «СОСО»).</p>
+                            <div class="historical-quote">
+                                "В период социально-экономических изменений движение не исчезает, а трансформируется. Отряды МГУ находят новые формы работы, сохраняя преемственность традиций."
+                                <div class="quote-author">— О периоде 1990-х годов</div>
+                            </div>
+                        </div>
+                        <div class="side-content">
+                            <h4><i class="fas fa-info-circle"></i> Ключевые факты</h4>
+                            <ul class="fact-list">
+                                <li><i class="fas fa-calendar-times"></i> <strong>Событие:</strong> Роспуск ВЛКСМ и ВССО</li>
+                                <li><i class="fas fa-map-marker-alt"></i> <strong>Сохранившиеся регионы:</strong> Свердловская область</li>
+                                <li><i class="fas fa-sitemap"></i> <strong>Форма существования:</strong> Локальные инициативы</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="sources-1991">
+                    <div class="sources-box">
+                        <h4><i class="fas fa-book"></i> Источники информации</h4>
+                        <div class="source-item">
+                            <p>История студенческих отрядов России. <a href="https://spbguvm.ru/%D0%B8%D1%81%D1%82%D0%BE%D1%80%D0%B8%D1%8F-%D1%81%D1%82%D1%83%D0%B4%D0%B5%D0%BD%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85-%D0%BE%D1%82%D1%80%D1%8B%D0%B0%D0%B4%D0%BE%D0%B2-%D1%80%D0%BE%D1%81%D1%81%D0%B8%D0%B8/" class="source-link" target="_blank">ссылка</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2002 год -->
+            <div class="year-section" id="year-2002" data-year="2002">
+                <div class="year-header">
+                    <div>
+                        <h2 class="year-title">2002 год</h2>
+                        <p class="year-period">Возрождение студенческих отрядов МГУ по инициативе Студенческого союза</p>
+                    </div>
+                    <div class="content-tags">
+                        <span class="content-tag important">Возрождение</span>
+                        <span class="content-tag">Студсоюз МГУ</span>
+                    </div>
+                </div>
+                <div class="year-tabs">
+                    <button class="year-tab active" data-tab="main-2002">Историческая справка</button>
+                    <button class="year-tab" data-tab="sources-2002">Источники</button>
+                </div>
+                <div class="tab-content active" id="main-2002">
+                    <div class="content-columns">
+                        <div class="main-content">
+                            <h3>Начало современного этапа</h3>
+                            <p>2002 год стал точкой отсчёта современной истории молодёжно-студенческих отрядов МГУ. Студенческий союз МГУ провёл набор в студенческий трудовой отряд, в результате чего было набрано около 100 человек, представляющих разные факультеты университета.</p>
+                            <p>Целина продолжилась с 3 июля по 31 августа 2002 года. 25 июля состоялась линейка - праздник студенческого отряда, который стал Днём ССО МГУ. Эта дата считается официальным днём возрождения движения в университете.</p>
+                            <div class="historical-quote">
+                                "Студенческий союз МГУ провел набор в студенческий трудовой отряд. В результате было набрано около 100 человек, представляющих разные факультеты МГУ."
+                                <div class="quote-author">— О возрождении отрядов в 2002 году</div>
+                            </div>
+                        </div>
+                        <div class="side-content">
+                            <h4><i class="fas fa-info-circle"></i> Ключевые факты</h4>
+                            <ul class="fact-list">
+                                <li><i class="fas fa-calendar-alt"></i> <strong>Дата начала:</strong> 3 июля 2002</li>
+                                <li><i class="fas fa-calendar-check"></i> <strong>День ССО МГУ:</strong> 25 июля 2002</li>
+                                <li><i class="fas fa-users"></i> <strong>Численность:</strong> ~100 человек</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="sources-2002">
+                    <div class="sources-box">
+                        <h4><i class="fas fa-book"></i> Источники информации</h4>
+                        <div class="source-item">
+                            <p>Статья о возрождении отрядов МГУ. <a href="http://www.getmedia.msu.ru/newspaper/newspaper/4048/all/student.htm" class="source-link" target="_blank">ссылка</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2003 год -->
+            <div class="year-section" id="year-2003" data-year="2003">
+                <div class="year-header">
+                    <div>
+                        <h2 class="year-title">2003 год</h2>
+                        <p class="year-period">Создание Московского городского штаба молодёжно-студенческих отрядов</p>
+                    </div>
+                    <div class="content-tags">
+                        <span class="content-tag important">Официальный статус</span>
+                        <span class="content-tag">МГШ МСО</span>
+                    </div>
+                </div>
+                <div class="year-tabs">
+                    <button class="year-tab active" data-tab="main-2003">Историческая справка</button>
+                    <button class="year-tab" data-tab="sources-2003">Источники</button>
+                </div>
+                <div class="tab-content active" id="main-2003">
+                    <div class="content-columns">
+                        <div class="main-content">
+                            <h3>Получение официального статуса</h3>
+                            <p>В 2003 году появился Московский городской штаб молодёжно-студенческих отрядов (МГШ МСО), созданный в соответствии с Распоряжением Правительства Москвы 10-РП от 9 января 2002 года. Это придало движению официальный статус на городском уровне.</p>
+                            <p>Создание МГШ МСО позволило наладить системное взаимодействие между студенческими отрядами разных вузов Москвы, координировать их деятельность, представлять их интересы в городских органах власти.</p>
+                        </div>
+                        <div class="side-content">
+                            <h4><i class="fas fa-info-circle"></i> Ключевые факты</h4>
+                            <ul class="fact-list">
+                                <li><i class="fas fa-calendar-alt"></i> <strong>Дата основания:</strong> 2003 год</li>
+                                <li><i class="fas fa-gavel"></i> <strong>Основание:</strong> Распоряжение Правительства Москвы</li>
+                                <li><i class="fas fa-sitemap"></i> <strong>Функции:</strong> Координация отрядов Москвы</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="sources-2003">
+                    <div class="sources-box">
+                        <h4><i class="fas fa-book"></i> Источники информации</h4>
+                        <div class="source-item">
+                            <p>Распоряжение Правительства Москвы 10-РП от 9 января 2002 года. <a href="http://mosopen.ru/document/10_rp_2002-01-09" class="source-link" target="_blank">ссылка</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2011 год -->
+            <div class="year-section" id="year-2011" data-year="2011">
+                <div class="year-header">
+                    <div>
+                        <h2 class="year-title">2011 год</h2>
+                        <p class="year-period">Регистрация МосРСО как юридического лица</p>
+                    </div>
+                    <div class="content-tags">
+                        <span class="content-tag important">Юридическое лицо</span>
+                        <span class="content-tag">МосРСО</span>
+                    </div>
+                </div>
+                <div class="year-tabs">
+                    <button class="year-tab active" data-tab="main-2011">Историческая справка</button>
+                    <button class="year-tab" data-tab="sources-2011">Источники</button>
+                </div>
+                <div class="tab-content active" id="main-2011">
+                    <div class="content-columns">
+                        <div class="main-content">
+                            <h3>Правовое оформление движения</h3>
+                            <p>В 2011 году Московское региональное отделение Российских студенческих отрядов (МосРСО) было зарегистрировано как юридическое лицо. Это стало важным шагом в формализации движения, предоставив ему правовой статус для полноценной деятельности.</p>
+                            <p>Регистрация как юридического лица позволила МосРСО заключать договоры, открывать банковские счета, получать финансирование, официально трудоустраивать бойцов студенческих отрядов.</p>
+                        </div>
+                        <div class="side-content">
+                            <h4><i class="fas fa-info-circle"></i> Ключевые факты</h4>
+                            <ul class="fact-list">
+                                <li><i class="fas fa-calendar-alt"></i> <strong>Год:</strong> 2011</li>
+                                <li><i class="fas fa-balance-scale"></i> <strong>Событие:</strong> Регистрация как юридического лица</li>
+                                <li><i class="fas fa-university"></i> <strong>Организация:</strong> МосРСО</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="sources-2011">
+                    <div class="sources-box">
+                        <h4><i class="fas fa-book"></i> Источники информации</h4>
+                        <div class="source-item">
+                            <p>Информация о регистрации МосРСО. <a href="https://vk.com/mso_msu" class="source-link" target="_blank">ссылка</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2017 год -->
+            <div class="year-section" id="year-2017" data-year="2017">
+                <div class="year-header">
+                    <div>
+                        <h2 class="year-title">2017 год</h2>
+                        <p class="year-period">Реорганизация штаба МСО МГУ и временное прекращение деятельности</p>
+                    </div>
+                    <div class="content-tags">
+                        <span class="content-tag">Реорганизация</span>
+                        <span class="content-tag">Перерыв</span>
+                    </div>
+                </div>
+                <div class="year-tabs">
+                    <button class="year-tab active" data-tab="main-2017">Историческая справка</button>
+                    <button class="year-tab" data-tab="sources-2017">Источники</button>
+                </div>
+                <div class="tab-content active" id="main-2017">
+                    <div class="content-columns">
+                        <div class="main-content">
+                            <h3>Кризис и перерыв в деятельности</h3>
+                            <p>17 февраля 2017 года на собрании штаб МСО МГУ выбрал нового командира и комиссара штаба. Однако через несколько месяцев после этого события штаб перестал функционировать. Это был сложный период в истории движения, связанный с организационными и кадровыми проблемами.</p>
+                            <p>Несмотря на прекращение деятельности штаба, отдельные отряды продолжали существовать и работать. Например, отряд «Буревестник» сохранился и даже выезжал на целину в 2018 году.</p>
+                        </div>
+                        <div class="side-content">
+                            <h4><i class="fas fa-info-circle"></i> Ключевые факты</h4>
+                            <ul class="fact-list">
+                                <li><i class="fas fa-calendar-alt"></i> <strong>Дата собрания:</strong> 17 февраля 2017</li>
+                                <li><i class="fas fa-pause-circle"></i> <strong>Результат:</strong> Прекращение деятельности штаба</li>
+                                <li><i class="fas fa-life-ring"></i> <strong>Сохранившиеся отряды:</strong> «Буревестник»</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="sources-2017">
+                    <div class="sources-box">
+                        <h4><i class="fas fa-book"></i> Источники информации</h4>
+                        <div class="source-item">
+                            <p>Материалы по истории МСО МГУ. <a href="https://vk.com/mso_msu" class="source-link" target="_blank">ссылка</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2018 год -->
+            <div class="year-section" id="year-2018" data-year="2018">
+                <div class="year-header">
+                    <div>
+                        <h2 class="year-title">2018 год</h2>
+                        <p class="year-period">Возрождение штаба МСО МГУ в новом формате</p>
+                    </div>
+                    <div class="content-tags">
+                        <span class="content-tag important">Возрождение</span>
+                        <span class="content-tag">Новый формат</span>
+                    </div>
+                </div>
+                <div class="year-tabs">
+                    <button class="year-tab active" data-tab="main-2018">Историческая справка</button>
+                    <button class="year-tab" data-tab="sources-2018">Источники</button>
+                </div>
+                <div class="tab-content active" id="main-2018">
+                    <div class="content-columns">
+                        <div class="main-content">
+                            <h3>Возрождение в новом качестве</h3>
+                            <p>2018 год стал годом возрождения штаба молодёжно-студенческих отрядов МГУ в новом формате. На линейке 28 мая была достигнута устная договорённость между МосРСО (в лице командира штаба Дрожжиной Юлии) и Студенческим союзом МГУ (в лице сопредседателя Хоменко Антона) о сотрудничестве по возрождению штаба МСО МГУ.</p>
+                            <p>В этом же году штаб МСО МГУ насчитывал уже 300 человек, работающих по различным направлениям. Были созданы отряды: строительный на фундаментальной библиотеке (140 человек), отряд по благоустройству территории МГУ, педагогический отряд в школе в Куркино, отряд на стройке Керченского моста и другие.</p>
+                        </div>
+                        <div class="side-content">
+                            <h4><i class="fas fa-info-circle"></i> Ключевые факты</h4>
+                            <ul class="fact-list">
+                                <li><i class="fas fa-calendar-alt"></i> <strong>Дата соглашения:</strong> 28 мая 2018</li>
+                                <li><i class="fas fa-users"></i> <strong>Численность:</strong> 300 человек</li>
+                                <li><i class="fas fa-hard-hat"></i> <strong>Ключевой проект:</strong> Керченский мост</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="sources-2018">
+                    <div class="sources-box">
+                        <h4><i class="fas fa-book"></i> Источники информации</h4>
+                        <div class="source-item">
+                            <p>Материалы по истории МСО МГУ. <a href="https://vk.com/mso_msu" class="source-link" target="_blank">ссылка</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2019 год -->
+            <div class="year-section" id="year-2019" data-year="2019">
+                <div class="year-header">
+                    <div>
+                        <h2 class="year-title">2019 год</h2>
+                        <p class="year-period">Формирование устойчивой структуры и проведение первой ОВК</p>
+                    </div>
+                    <div class="content-tags">
+                        <span class="content-tag">ОВК</span>
+                        <span class="content-tag">Структура</span>
+                    </div>
+                </div>
+                <div class="year-tabs">
+                    <button class="year-tab active" data-tab="main-2019">Историческая справка</button>
+                    <button class="year-tab" data-tab="sources-2019">Источники</button>
+                </div>
+                <div class="tab-content active" id="main-2019">
+                    <div class="content-columns">
+                        <div class="main-content">
+                            <h3>Становление организационной структуры</h3>
+                            <p>В 2019 году продолжилось формирование современной структуры штаба МСО МГУ. Были проведены первые точечные выезды совместно с МосРСО, определены основные направления деятельности. На социальном факультете МГУ прошла лекция от Белокрыловой Натальи, посвящённая студенческим отрядам.</p>
+                            <p>В декабре 2019 года состоялась первая отчётно-выборная конференция (ОВК), на которой был избран новый командный состав штаба. Комиссар штаба Юлия Кукула передала полномочия исполняющему обязанности комиссара штаба Федичеву Алексею. Мастером штаба стала Звычайная Елизавета.</p>
+                        </div>
+                        <div class="side-content">
+                            <h4><i class="fas fa-info-circle"></i> Ключевые факты</h4>
+                            <ul class="fact-list">
+                                <li><i class="fas fa-calendar-alt"></i> <strong>Первая ОВК:</strong> Декабрь 2019</li>
+                                <li><i class="fas fa-birthday-cake"></i> <strong>День рождения МСО:</strong> Декабрь</li>
+                                <li><i class="fas fa-user-friends"></i> <strong>Новый комсостав:</strong> Избран на ОВК</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="sources-2019">
+                    <div class="sources-box">
+                        <h4><i class="fas fa-book"></i> Источники информации</h4>
+                        <div class="source-item">
+                            <p>Материалы по истории МСО МГУ. <a href="https://vk.com/mso_msu" class="source-link" target="_blank">ссылка</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2020 год -->
+            <div class="year-section" id="year-2020" data-year="2020">
+                <div class="year-header">
+                    <div>
+                        <h2 class="year-title">2020 год</h2>
+                        <p class="year-period">Развитие направлений и появление новых отрядов</p>
+                    </div>
+                    <div class="content-tags">
+                        <span class="content-tag">Universum</span>
+                        <span class="content-tag">Пульсар</span>
+                        <span class="content-tag">Параллакс</span>
+                    </div>
+                </div>
+                <div class="year-tabs">
+                    <button class="year-tab active" data-tab="main-2020">Историческая справка</button>
+                    <button class="year-tab" data-tab="sources-2020">Источники</button>
+                </div>
+                <div class="tab-content active" id="main-2020">
+                    <div class="content-columns">
+                        <div class="main-content">
+                            <h3>Расширение и развитие</h3>
+                            <p>В 2020 году продолжилось развитие штаба МСО МГУ. В августе появилось название Universum, в сентябре зарегистрировался педагогический отряд, в октябре — сервисный отряд «Пульсар», позже — строительный отряд «Параллакс». На отчётно-выборной конференции был сформирован полный состав штаба.</p>
+                            <p>Несмотря на сложности, связанные с пандемией, штаб продолжал развиваться, адаптируясь к новым условиям. Были налажены онлайн-форматы работы, что позволило сохранить активность в непростой период.</p>
+                        </div>
+                        <div class="side-content">
+                            <h4><i class="fas fa-info-circle"></i> Ключевые факты</h4>
+                            <ul class="fact-list">
+                                <li><i class="fas fa-calendar-alt"></i> <strong>Август:</strong> Название Universum</li>
+                                <li><i class="fas fa-calendar-alt"></i> <strong>Сентябрь:</strong> Педагогический отряд</li>
+                                <li><i class="fas fa-calendar-alt"></i> <strong>Октябрь:</strong> «Пульсар»</li>
+                                <li><i class="fas fa-calendar-alt"></i> <strong>Позже:</strong> «Параллакс»</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="sources-2020">
+                    <div class="sources-box">
+                        <h4><i class="fas fa-book"></i> Источники информации</h4>
+                        <div class="source-item">
+                            <p>Материалы по истории МСО МГУ. <a href="https://vk.com/mso_msu" class="source-link" target="_blank">ссылка</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2021 год -->
+            <div class="year-section" id="year-2021" data-year="2021">
+                <div class="year-header">
+                    <div>
+                        <h2 class="year-title">2021 год</h2>
+                        <p class="year-period">Новые достижения и расширение географии</p>
+                    </div>
+                    <div class="content-tags">
+                        <span class="content-tag">Снежный десант</span>
+                        <span class="content-tag">Космодром Восточный</span>
+                    </div>
+                </div>
+                <div class="year-tabs">
+                    <button class="year-tab active" data-tab="main-2021">Историческая справка</button>
+                    <button class="year-tab" data-tab="sources-2021">Источники</button>
+                </div>
+                <div class="tab-content active" id="main-2021">
+                    <div class="content-columns">
+                        <div class="main-content">
+                            <h3>Основные события года</h3>
+                            <p>В 2021 году состоялся первый выезд в снежный десант. Зарегистрировался сервисный отряд. Была одержана победа на конкурсе Мистер МосРСО. Целина ССО прошла на космодроме "Восточный". Состоялась линейка на Воробьёвых горах. Лучшим командиром проекта ССО стала Родионова Евгения. Прошёл первый выезд в Красновидово.</p>
+                            <p>2021 год стал периодом активного развития всех направлений деятельности МСО МГУ. Особое внимание уделялось профессиональной подготовке бойцов, расширению географии работ, участию в конкурсах и мероприятиях регионального уровня.</p>
+                        </div>
+                        <div class="side-content">
+                            <h4><i class="fas fa-info-circle"></i> Ключевые факты</h4>
+                            <ul class="fact-list">
+                                <li><i class="fas fa-snowflake"></i> <strong>Снежный десант:</strong> Первый выезд</li>
+                                <li><i class="fas fa-rocket"></i> <strong>Космодром:</strong> Целина на "Восточном"</li>
+                                <li><i class="fas fa-trophy"></i> <strong>Победа:</strong> Мистер МосРСО</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="sources-2021">
+                    <div class="sources-box">
+                        <h4><i class="fas fa-book"></i> Источники информации</h4>
+                        <div class="source-item">
+                            <p>Материалы по истории МСО МГУ. <a href="https://vk.com/mso_msu" class="source-link" target="_blank">ссылка</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2022 год -->
+            <div class="year-section" id="year-2022" data-year="2022">
+                <div class="year-header">
+                    <div>
+                        <h2 class="year-title">2022 год</h2>
+                        <p class="year-period">Проектная деятельность и инфраструктурное развитие</p>
+                    </div>
+                    <div class="content-tags">
+                        <span class="content-tag">Научная долина</span>
+                        <span class="content-tag">Грант</span>
+                        <span class="content-tag">Форум</span>
+                    </div>
+                </div>
+                <div class="year-tabs">
+                    <button class="year-tab active" data-tab="main-2022">Историческая справка</button>
+                    <button class="year-tab" data-tab="sources-2022">Источники</button>
+                </div>
+                <div class="tab-content active" id="main-2022">
+                    <div class="content-columns">
+                        <div class="main-content">
+                            <h3>Развитие проектной деятельности</h3>
+                            <p>В 2022 году начались работы в научной долине МГУ. Была проведена первая активная пиар-кампания 1 сентября. Штаб выиграл грант и провёл Форум МСО МГУ с гостями из МосРСО и других регионов. Впервые были закуплены бойцовки не на средства студентов. Состоялся первый день управления трудовым семестром (ДУТ) штаба.</p>
+                            <p>Этот год стал периодом активного развития инфраструктуры штаба и расширения его проектной деятельности. Особое внимание уделялось привлечению внешнего финансирования и укреплению материальной базы.</p>
+                        </div>
+                        <div class="side-content">
+                            <h4><i class="fas fa-info-circle"></i> Ключевые факты</h4>
+                            <ul class="fact-list">
+                                <li><i class="fas fa-flask"></i> <strong>Научная долина:</strong> Старт работ</li>
+                                <li><i class="fas fa-award"></i> <strong>Грант:</strong> Выигран и проведён Форум</li>
+                                <li><i class="fas fa-tshirt"></i> <strong>Бойцовки:</strong> Закуплены не на средства студентов</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="sources-2022">
+                    <div class="sources-box">
+                        <h4><i class="fas fa-book"></i> Источники информации</h4>
+                        <div class="source-item">
+                            <p>Материалы по истории МСО МГУ. <a href="https://vk.com/mso_msu" class="source-link" target="_blank">ссылка</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2023 год -->
+            <div class="year-section" id="year-2023" data-year="2023">
+                <div class="year-header">
+                    <div>
+                        <h2 class="year-title">2023 год</h2>
+                        <p class="year-period">Инфраструктурное развитие и образовательные программы</p>
+                    </div>
+                    <div class="content-tags">
+                        <span class="content-tag">Коворкинг</span>
+                        <span class="content-tag">ШМП</span>
+                        <span class="content-tag">ШКС</span>
+                    </div>
+                </div>
+                <div class="year-tabs">
+                    <button class="year-tab active" data-tab="main-2023">Историческая справка</button>
+                    <button class="year-tab" data-tab="sources-2023">Источники</button>
+                </div>
+                <div class="tab-content active" id="main-2023">
+                    <div class="content-columns">
+                        <div class="main-content">
+                            <h3>Инфраструктурное развитие</h3>
+                            <p>В 2023 году открылся коворкинг МГУ и появилось новое оборудование. Состоялась первая целина Археологического, Сельскохозяйственного и медицинского отрядов. Появился новый отряд «Кеплер». Были проведены первые Школы молодого пожарного (ШМП) и Школы командного состава (ШКС). Были созданы отделы в структуре штаба.</p>
+                            <p>Этот год стал периодом значительного улучшения материально-технической базы штаба и развития образовательных программ для бойцов и командного состава.</p>
+                        </div>
+                        <div class="side-content">
+                            <h4><i class="fas fa-info-circle"></i> Ключевые факты</h4>
+                            <ul class="fact-list">
+                                <li><i class="fas fa-building"></i> <strong>Коворкинг:</strong> Открытие в МГУ</li>
+                                <li><i class="fas fa-seedling"></i> <strong>Новые отряды:</strong> Археологический, Сельхоз, Мед</li>
+                                <li><i class="fas fa-graduation-cap"></i> <strong>Школы:</strong> ШМП и ШКС</li>
+                                <li><i class="fas fa-sitemap"></i> <strong>Структура:</strong> Созданы отделы</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="sources-2023">
+                    <div class="sources-box">
+                        <h4><i class="fas fa-book"></i> Источники информации</h4>
+                        <div class="source-item">
+                            <p>Материалы по истории МСО МГУ. <a href="https://vk.com/mso_msu" class="source-link" target="_blank">ссылка</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2024 год -->
+            <div class="year-section" id="year-2024" data-year="2024">
+                <div class="year-header">
+                    <div>
+                        <h2 class="year-title">2024 год</h2>
+                        <p class="year-period">Юбилейный год: 65 лет движению и 20 лет РСО</p>
+                    </div>
+                    <div class="content-tags">
+                        <span class="content-tag important">65 лет движению</span>
+                        <span class="content-tag">20 лет РСО</span>
+                        <span class="content-tag">IT-отряд</span>
+                    </div>
+                </div>
+                <div class="year-tabs">
+                    <button class="year-tab active" data-tab="main-2024">Историческая справка</button>
+                    <button class="year-tab" data-tab="structure-2024">Структура МСО МГУ</button>
+                    <button class="year-tab" data-tab="sources-2024">Источники</button>
+                </div>
+                <div class="tab-content active" id="main-2024">
+                    <div class="content-columns">
+                        <div class="main-content">
+                            <h3>Двойной юбилей</h3>
+                            <p>2024 год стал юбилейным для студенческого отрядного движения: 65 лет с момента создания первого отряда и 20 лет современной истории Российских студенческих отрядов (РСО). Для МГУ эти даты имеют особое значение, поскольку именно в Московском университете движение студенческих отрядов было основано в 1959 году.</p>
+                            <p>В 2024 году состоялась первая целина IT-отряда, прошла грандиозная юбилейная линейка, посвященная двойному юбилею. Штаб молодёжно-студенческих отрядов МГУ продолжает активно развиваться, сохраняя традиции и внедряя инновации.</p>
+                        </div>
+                        <div class="side-content">
+                            <h4><i class="fas fa-info-circle"></i> Ключевые события 2024</h4>
+                            <ul class="fact-list">
+                                <li><i class="fas fa-code"></i> Первая целина IT-отряда</li>
+                                <li><i class="fas fa-birthday-cake"></i> Юбилейная линейка (65 лет отрядам, 20 лет РСО)</li>
+                                <li><i class="fas fa-users"></i> 200 волонтеров в проекте "Путь Ломоносова"</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="structure-2024">
+                    <h3>Структура МСО МГУ в 2024 году</h3>
+                    <p>Штаб насчитывает 7 отрядов по 6 направлениям деятельности:</p>
+                    <ul class="fact-list">
+                        <li><strong>Строительное:</strong> ССО "Параллакс"</li>
+                        <li><strong>Педагогическое:</strong> СПО "Спутник" и "Кеплер"</li>
+                        <li><strong>Сервисное:</strong> ССервО "Пульсар"</li>
+                        <li><strong>Археологическое:</strong> САО "Терра"</li>
+                        <li><strong>Сельскохозяйственное:</strong> ССхО "Альдебаран"</li>
+                        <li><strong>IT:</strong> "BackSpace"</li>
+                    </ul>
+                </div>
+                <div class="tab-content" id="sources-2024">
+                    <div class="sources-box">
+                        <h4><i class="fas fa-book"></i> Источники информации</h4>
+                        <div class="source-item">
+                            <p>Актуальная информация о МСО МГУ. <a href="https://stud.spa.msu.ru/molodezhno-studencheskie-otryady-mgu-im-m-v-lomonosova/" class="source-link" target="_blank">ссылка</a></p>
+                        </div>
+                        <div class="source-item">
+                            <p>Официальная группа МСО МГУ ВКонтакте. <a href="https://vk.com/mso_msu" class="source-link" target="_blank">ссылка</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Навигация между годами -->
             <div class="year-navigation">
-                <button class="nav-btn" id="prevYearBtn" onclick="navigateYear('prev')">
+                <button class="nav-btn" id="prevYearBtn">
                     <i class="fas fa-chevron-left"></i> Предыдущий год
                 </button>
-                <button class="nav-btn" id="nextYearBtn" onclick="navigateYear('next')">
+                <button class="nav-btn" id="nextYearBtn">
                     Следующий год <i class="fas fa-chevron-right"></i>
                 </button>
             </div>
         </section>
     </main>
 
+    <footer style="background: #003366; color: white; padding: 40px 0; text-align: center; margin-top: 60px;">
+        <div class="container">
+            <p>© Молодёжно-Студенческий Штаб МГУ, 2024</p>
+            <p>Продолжаем дело, начатое в 1959 году.</p>
+        </div>
+    </footer>
+
     <script>
-        // Данные по годам с историческими справками
+        // Данные по годам
         const yearsData = {
-            '1923': { 
-                title: '1923 год', 
-                period: 'Предыстория студенческих отрядов', 
-                tags: ['Предыстория', 'Томск'],
-                era: 'prehistory'
-            },
-            '1956': { 
-                title: '1956 год', 
-                period: 'Первый массовый выезд на целину', 
-                tags: ['Физфак', 'Целина'],
-                era: 'early'
-            },
-            '1957': { 
-                title: '1957 год', 
-                period: 'Инициатива Владимира Неудачина', 
-                tags: ['В.Г. Неудачин', 'Целина'],
-                era: 'early'
-            },
-            '1958': { 
-                title: '1958 год', 
-                period: 'Расширение движения под руководством Вячеслава Письменного', 
-                tags: ['В.Д. Письменный', 'Массовый выезд'],
-                era: 'early'
-            },
-            '1959': { 
-                title: '1959 год', 
-                period: 'Рождение Всесоюзного студенческого отряда', 
-                tags: ['Основание', 'С.Ф. Литвиненко', 'Казахстан'],
-                era: 'ussr'
-            },
-            '1960': { 
-                title: '1960 год', 
-                period: 'Присоединение мехмата и первый Всесоюзный отряд', 
-                tags: ['В.А. Садовничий', 'Всесоюзный масштаб', 'Мехмат МГУ'],
-                era: 'ussr'
-            },
-            '1965': { 
-                title: '1965 год', 
-                period: 'Массовое развитие движения', 
-                tags: ['300 тысяч', 'Расширение'],
-                era: 'ussr'
-            },
-            '1970': { 
-                title: '1970-е годы', 
-                period: 'Расцвет ССО', 
-                tags: ['750 тысяч', 'БАМ', 'КАМАЗ'],
-                era: 'ussr'
-            },
-            '1991': { 
-                title: '1991 год', 
-                period: 'Переломный момент', 
-                tags: ['Распад СССР', 'Перестройка'],
-                era: 'transition'
-            },
-            '2002': { 
-                title: '2002 год', 
-                period: 'Возрождение движения в МГУ', 
-                tags: ['Возрождение', 'Студсоюз МГУ'],
-                era: 'modern'
-            },
-            '2003': { 
-                title: '2003 год', 
-                period: 'Создание МГШ МСО', 
-                tags: ['МГШ МСО', 'Официальный статус'],
-                era: 'modern'
-            },
-            '2011': { 
-                title: '2011 год', 
-                period: 'Регистрация МосРСО', 
-                tags: ['МосРСО', 'Юридическое лицо'],
-                era: 'modern'
-            },
-            '2017': { 
-                title: '2017 год', 
-                period: 'Реорганизация штаба', 
-                tags: ['Реорганизация', 'Новый этап'],
-                era: 'modern'
-            },
-            '2018': { 
-                title: '2018 год', 
-                period: 'Возрождение штаба МСО МГУ', 
-                tags: ['Возрождение', 'Договорённость'],
-                era: 'modern'
-            },
-            '2019': { 
-                title: '2019 год', 
-                period: 'Формирование современной структуры', 
-                tags: ['ОВК', 'Отряды'],
-                era: 'modern'
-            },
-            '2020': { 
-                title: '2020 год', 
-                period: 'Развитие направлений', 
-                tags: ['Universum', 'Пульсар', 'Параллакс'],
-                era: 'modern'
-            },
-            '2021': { 
-                title: '2021 год', 
-                period: 'Новые достижения', 
-                tags: ['Снежный десант', 'Космодром Восточный'],
-                era: 'modern'
-            },
-            '2022': { 
-                title: '2022 год', 
-                period: 'Проектная деятельность', 
-                tags: ['Научная долина', 'Грант', 'Форум'],
-                era: 'modern'
-            },
-            '2023': { 
-                title: '2023 год', 
-                period: 'Инфраструктурное развитие', 
-                tags: ['Коворкинг', 'ШМП', 'ШКС'],
-                era: 'modern'
-            },
-            '2024': { 
-                title: '2024 год', 
-                period: 'Юбилейный год', 
-                tags: ['65 лет', '20 лет РСО', 'IT-отряд'],
-                era: 'modern'
-            }
+            '1923': { title: '1923 год', period: 'Предыстория студенческих отрядов', era: 'prehistory' },
+            '1956': { title: '1956 год', period: 'Первый массовый выезд на целину', era: 'early' },
+            '1957': { title: '1957 год', period: 'Инициатива Владимира Неудачина', era: 'early' },
+            '1958': { title: '1958 год', period: 'Расширение движения под руководством Вячеслава Письменного', era: 'early' },
+            '1959': { title: '1959 год', period: 'Рождение Всесоюзного студенческого отряда', era: 'ussr' },
+            '1960': { title: '1960 год', period: 'Присоединение мехмата и первый Всесоюзный отряд', era: 'ussr' },
+            '1965': { title: '1965 год', period: 'Всесоюзный масштаб: 300 тысяч участников', era: 'ussr' },
+            '1970': { title: '1970-е годы', period: 'Эпоха массового движения и участие в ударных стройках', era: 'ussr' },
+            '1991': { title: '1991 год', period: 'Распад централизованной системы и начало нового этапа', era: 'transition' },
+            '2002': { title: '2002 год', period: 'Возрождение студенческих отрядов МГУ', era: 'modern' },
+            '2003': { title: '2003 год', period: 'Создание Московского городского штаба молодёжно-студенческих отрядов', era: 'modern' },
+            '2011': { title: '2011 год', period: 'Регистрация МосРСО как юридического лица', era: 'modern' },
+            '2017': { title: '2017 год', period: 'Реорганизация штаба МСО МГУ', era: 'modern' },
+            '2018': { title: '2018 год', period: 'Возрождение штаба МСО МГУ в новом формате', era: 'modern' },
+            '2019': { title: '2019 год', period: 'Формирование устойчивой структуры и первая ОВК', era: 'modern' },
+            '2020': { title: '2020 год', period: 'Развитие направлений и появление новых отрядов', era: 'modern' },
+            '2021': { title: '2021 год', period: 'Новые достижения и расширение географии', era: 'modern' },
+            '2022': { title: '2022 год', period: 'Проектная деятельность и инфраструктурное развитие', era: 'modern' },
+            '2023': { title: '2023 год', period: 'Инфраструктурное развитие и образовательные программы', era: 'modern' },
+            '2024': { title: '2024 год', period: 'Юбилейный год: 65 лет движению и 20 лет РСО', era: 'modern' }
         };
 
-        // Мажорные годы (важные вехи)
         const majorYears = ['1923', '1959', '1991', '2002', '2018', '2024'];
-        
         let currentYear = '1959';
         let yearSections = [];
 
@@ -1058,8 +1099,6 @@
             initYearNavigation();
             initYearSections();
             showYear('1959');
-            
-            // Инициализация вкладок
             initTabs();
         });
 
@@ -1090,36 +1129,19 @@
 
         // Показать секцию года
         function showYear(year) {
-            // Обновить активную кнопку в навигации
             document.querySelectorAll('.year-btn').forEach(btn => {
                 btn.classList.remove('active');
-                if (btn.dataset.year === year) {
-                    btn.classList.add('active');
-                }
+                if (btn.dataset.year === year) btn.classList.add('active');
             });
             
-            // Скрыть все секции
-            yearSections.forEach(section => {
-                section.classList.remove('active');
-            });
+            yearSections.forEach(section => section.classList.remove('active'));
             
-            // Показать выбранную секцию
             const targetSection = document.getElementById(`year-${year}`);
             if (targetSection) {
                 targetSection.classList.add('active');
                 currentYear = year;
-                
-                // Прокрутить к секции
                 targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                
-                // Обновить навигационные кнопки
                 updateNavigationButtons();
-                
-                // Активировать первую вкладку
-                const firstTab = targetSection.querySelector('.year-tab');
-                if (firstTab) {
-                    firstTab.click();
-                }
             }
         }
 
@@ -1133,9 +1155,11 @@
             
             prevBtn.disabled = currentIndex <= 0;
             prevBtn.classList.toggle('disabled', currentIndex <= 0);
+            prevBtn.onclick = () => navigateYear('prev');
             
             nextBtn.disabled = currentIndex >= years.length - 1;
             nextBtn.classList.toggle('disabled', currentIndex >= years.length - 1);
+            nextBtn.onclick = () => navigateYear('next');
         }
 
         // Навигация между годами
@@ -1158,23 +1182,14 @@
                     const section = tab.closest('.year-section');
                     const tabId = tab.dataset.tab;
                     
-                    // Скрыть все вкладки в этой секции
                     section.querySelectorAll('.year-tab').forEach(t => t.classList.remove('active'));
                     section.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                     
-                    // Показать выбранную вкладку
                     tab.classList.add('active');
                     const targetContent = document.getElementById(tabId);
-                    if (targetContent) {
-                        targetContent.classList.add('active');
-                    }
+                    if (targetContent) targetContent.classList.add('active');
                 }
             });
-        }
-
-        // Прокрутка к секции
-        function scrollToSection(sectionId) {
-            document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
         }
     </script>
 </body>
